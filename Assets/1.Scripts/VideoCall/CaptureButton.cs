@@ -74,9 +74,7 @@ public class CaptureButton : MonoBehaviour
     private void ChangeTextureAndSave()
     {
         string totalPath = TotalPath;
-        Texture2D screenTex = new Texture2D(Screen.width, Screen.height, TextureFormat.ARGB32, false);
-        screenTex.ReadPixels(new Rect(0, 0, Screen.width, Screen.height), 0, 0);
-        screenTex.Apply();
+        Texture2D screenTex = ScreenCapture.CaptureScreenshotAsTexture();
 
         // 현재 스크린으로부터 지정 영역의 픽셀들을 텍스쳐에 저장
         bool succeeded = true;
@@ -93,7 +91,6 @@ public class CaptureButton : MonoBehaviour
             succeeded = false;
             Debug.LogWarning($"Screen Shot Save Failed : {totalPath}\n{e}");
         }
-
         Destroy(screenTex);// 만든 텍스쳐 삭제
 
         if (succeeded)
