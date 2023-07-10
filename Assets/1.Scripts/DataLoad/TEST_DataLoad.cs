@@ -9,6 +9,7 @@ public class TEST_DataLoad : MonoBehaviour
     void Start()
     {
         sheet.Load(SheetName.CHATTING_TEMPLATE, StartChatLog);
+        Character.LoadCharacter();
     }
 
 

@@ -30,8 +30,10 @@ public partial class ChattingData
 
             // Test Code
             case ChattingType.Select:
-                ChattingData.Set(ChattingDataType.PrevResponse, Random.Range(0,3));
-                return GetSelectedText(1);
+                int random = Random.Range(0, 3);
+                Debug.Log($"·£´ý ¼¿·ºÆÃ: {random}");
+                ChattingData.Set(ChattingDataType.PrevResponse, random);
+                return GetSelectedText(random);
 
             default:
                 return "";
