@@ -6,6 +6,11 @@
       "scopes": [
         "jp.keijiro"
       ]
+    },
+    {
+      "name": "iBicha",
+      "url": "https://registry.npmjs.com",
+      "scopes": [ "com.ibicha" ]
     }
   ],
   "dependencies": {
@@ -70,6 +75,7 @@
     "jp.keijiro.mediapipe.blazeface": "1.2.0",
     "jp.keijiro.mediapipe.facelandmark": "1.1.0",
     "jp.keijiro.mediapipe.iris": "1.2.0",
-    "jp.keijiro.noiseshader": "1.0.0"
+    "jp.keijiro.noiseshader": "1.0.0",
+    "com.ibicha.youtube-player": "2.0.2"
   }
 }
