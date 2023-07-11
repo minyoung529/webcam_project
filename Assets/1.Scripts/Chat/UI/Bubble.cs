@@ -13,7 +13,7 @@ public class Bubble : MonoBehaviour
     //말풍선 꼬리
     [Space(10)]
     [SerializeField]
-    private GameObject tail;
+    private GameObject trail;
     //유저 반응
     [SerializeField]
     private GameObject emojis;
@@ -29,18 +29,19 @@ public class Bubble : MonoBehaviour
     private TMP_Text userNameText;
 
     //누가 보냈는지 기억
-    private string userName;
+    private string userName,sendTime;
 
     #region property
     public RectTransform BubbleRect => bubbleRect;
     public RectTransform BoxRect => boxRect;
     public RectTransform TextRect => textRect;
 
-    public GameObject Tail => tail;
+    public GameObject Trail => trail;
     public GameObject Emojis => emojis;
     public Image UserImage => userImage;
 
     public TMP_Text UserNameText => userNameText;
     public string UserName { get { return userName; } set { userName = value; } }
+    public string SendTime { get { return sendTime; } set { sendTime = value; } }
     #endregion
 }
