@@ -12,11 +12,6 @@ public enum ChatType
     Default = 0,
     Monologue, //독백
 }
-public enum EmojiType
-{
-    None = 0,
-    Star = 1,
-}
 public class ChatManager : MonoBehaviour
 {
     [SerializeField]
@@ -88,7 +83,7 @@ public class ChatManager : MonoBehaviour
         }
         otherTyping.gameObject.SetActive(false);
     }
-    protected void Chat(RectTransform contentRect, Scrollbar scrollbar, bool isSend, string text, string user, EmojiType emojiType = EmojiType.None, Sprite picture = null, ChatType chatType = ChatType.Default)
+    protected void Chat(RectTransform contentRect, Scrollbar scrollbar, bool isSend, string text, string user, ReactionType reactionType = ReactionType.None, Sprite picture = null, ChatType chatType = ChatType.Default)
     {
         if (text.Trim() == "") return; //스페이스, 엔터 걸러줌
         text = text.Trim();
@@ -99,13 +94,25 @@ public class ChatManager : MonoBehaviour
         if (picture != null && bubble.UserImage != null)
             bubble.UserImage.sprite = picture;
 
-        switch (emojiType)
+        switch (reactionType)
         {
-            case EmojiType.None:
+            case ReactionType.None:
                 bubble.Emojis.SetActive(false);
                 break;
-            case EmojiType.Star:
+            case ReactionType.Heart:        //추후 추가 하는걸로.. 지금은 껐다키기
                 bubble.Emojis.SetActive(true);
+                break;
+            case ReactionType.Good:
+                break;
+            case ReactionType.Check:
+                break;
+            case ReactionType.Sad:
+                break;
+            case ReactionType.Fun:
+                break;
+            case ReactionType.AI:
+                break;
+            case ReactionType.Count:
                 break;
             default:
                 break;

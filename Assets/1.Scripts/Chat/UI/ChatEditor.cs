@@ -2,14 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
-[CustomEditor(typeof(TestChatManager))]
+[CustomEditor(typeof(TestChatUIManager))]
 public class ChatEditor : Editor
 {
-    TestChatManager chatManager;
+    TestChatUIManager chatManager;
     string text;
     private void OnEnable()
     {
-        chatManager = target as TestChatManager;
+        chatManager = target as TestChatUIManager;
     }
 
     public override void OnInspectorGUI()
@@ -21,13 +21,13 @@ public class ChatEditor : Editor
 
         if (GUILayout.Button("보내기", GUILayout.Width(60)) && text.Trim() != "")
         {
-            chatManager.TestChat(true, text, "나", EmojiType.None);
+            chatManager.TestChat(true, text, "나", ReactionType.None);
             text = "";
             GUI.FocusControl(null);
         }
         if (GUILayout.Button("받기", GUILayout.Width(60)) && text.Trim() != "")
         {
-            chatManager.TestChat(false, text, "미녕",EmojiType.None);
+            chatManager.TestChat(false, text, "미녕",ReactionType.None);
             text = "";
             GUI.FocusControl(null);
         }
