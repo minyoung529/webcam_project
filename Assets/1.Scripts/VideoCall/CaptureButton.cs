@@ -1,3 +1,4 @@
+using DG.Tweening;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -9,10 +10,11 @@ using UnityEngine.UI;
 
 public class CaptureButton : MonoBehaviour
 {
+    [SerializeField] private Image screenFade;
 
-    public string folderName = "WebcamGGM";
-    public string fileName = "Webcam";
-    public string extName = "png";
+    private string folderName = "WebcamGGM";
+    private string fileName = "Webcam";
+    private string extName = "png";
     private string RootPath
     {
         get
@@ -99,6 +101,7 @@ public class CaptureButton : MonoBehaviour
             lastSavedPath = totalPath;
         }
         RefreshAndroidGallery(totalPath);
+        CaptureEffect();
     }
 
     private void RefreshAndroidGallery(string imageFilePath)
@@ -113,5 +116,11 @@ public class CaptureButton : MonoBehaviour
         { "android.intent.action.MEDIA_SCANNER_SCAN_FILE", classUri.CallStatic<AndroidJavaObject>("parse", "file://" + imageFilePath) });
         objActivity.Call("sendBroadcast", objIntent);
 #endif
+    }
+
+    private void CaptureEffect()
+    {
+        screenFade.color = Color.white;
+        screenFade.DOFade(0f, 0.7f).SetEase(Ease.Flash);
     }
 }
