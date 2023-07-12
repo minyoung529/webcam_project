@@ -31,12 +31,12 @@ public partial class Character
     }
 
     #region Access
-    public Character GetCharacter(CharacterName characterName)
+    public static Character GetCharacter(CharacterName characterName)
     {
         return GetCharacter(characterName.ToString());
     }
 
-    public Character GetCharacter(string characterName)
+    public static Character GetCharacter(string characterName)
     {
         List<Character> characterList = new (CharacterSheet.List);
         Character character = characterList.Find(x => x.englishName == characterName);
