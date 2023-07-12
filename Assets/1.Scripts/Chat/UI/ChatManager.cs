@@ -20,10 +20,20 @@ public enum EmojiType
 public class ChatManager : MonoBehaviour
 {
     [SerializeField]
-    protected GameObject otherArea, mineArea, noticeArea;
+    protected GameObject otherArea, mineArea, noticeArea, otherTypingPrefab, mineTypingPrefab;
 
     protected Bubble LastArea;
+    protected Bubble otherTyping, mineTyping;
     protected bool isother = false;
+
+    protected void SetupTypingBubble(RectTransform contentRect)
+    {
+        otherTyping = CreateArea(contentRect, otherTypingPrefab);
+        mineTyping = CreateArea(contentRect, mineTypingPrefab);
+
+        otherTyping.gameObject.SetActive(false);
+        mineTyping.gameObject.SetActive(false);
+    }
     public void IsOtherPeople(Toggle isOther)
     {
         isother = isOther.isOn;
@@ -38,7 +48,7 @@ public class ChatManager : MonoBehaviour
 
     protected void Notice(RectTransform contentRect, Scrollbar scrollbar, string notice)
     {
-        Bubble bubble = CreatArea(contentRect, noticeArea, notice);
+        Bubble bubble = CreateArea(contentRect, noticeArea, notice);
 
         Fit(bubble.BoxRect);
         Fit(bubble.BubbleRect);
@@ -48,13 +58,43 @@ public class ChatManager : MonoBehaviour
 
         StartCoroutine(ScrollDelay(scrollbar));
     }
+    protected void ShowTyping(RectTransform contentRect, Scrollbar scrollbar, bool isSend, string user = "", Sprite picture = null)
+    {
+        Bubble bubble = null;
+
+        if (isSend)
+            bubble = mineTyping;
+        else
+            bubble = otherTyping;
+
+        bubble.gameObject.SetActive(true);
+        bubble.transform.SetAsLastSibling();
+
+        LastArea = bubble;
+        if (!isSend)
+        {
+            bubble.UserName = user;
+            bubble.UserNameText.text = bubble.UserName;
+        }
+
+        StartCoroutine(ScrollDelay(scrollbar));
+    }
+    protected void RemoveTyping(bool isSend)
+    {
+        if (isSend)
+        {
+            mineTyping.gameObject.SetActive(false);
+            return;
+        }
+        otherTyping.gameObject.SetActive(false);
+    }
     protected void Chat(RectTransform contentRect, Scrollbar scrollbar, bool isSend, string text, string user, EmojiType emojiType = EmojiType.None, Sprite picture = null, ChatType chatType = ChatType.Default)
     {
         if (text.Trim() == "") return; //스페이스, 엔터 걸러줌
         text = text.Trim();
         bool isBottom = scrollbar.value <= 0.1f;
 
-        Bubble bubble = CreatArea(contentRect, isSend ? mineArea : otherArea, text);
+        Bubble bubble = CreateArea(contentRect, isSend ? mineArea : otherArea, text);
 
         if (picture != null && bubble.UserImage != null)
             bubble.UserImage.sprite = picture;
@@ -103,12 +143,13 @@ public class ChatManager : MonoBehaviour
         yield return new WaitForSeconds(0.03f);
         scrollbar.value = 0;
     }
-    protected Bubble CreatArea(RectTransform contentRect, GameObject obj, string text)
+    protected Bubble CreateArea(RectTransform contentRect, GameObject obj, string text = "")
     {
         Bubble bubble = Instantiate(obj).GetComponent<Bubble>();
         bubble.transform.SetParent(contentRect.transform, false);
-        bubble.BoxRect.sizeDelta = new Vector2(600, bubble.BoxRect.sizeDelta.y);
-        bubble.TextRect.GetComponent<TMP_Text>().text = text;
+        //bubble.BoxRect.sizeDelta = new Vector2(600, bubble.BoxRect.sizeDelta.y);
+        if (text != string.Empty)
+            bubble.TextRect.GetComponent<TMP_Text>().text = text;
 
         return bubble;
     }
