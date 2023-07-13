@@ -12,6 +12,6 @@ public class SheetSOHolder : ScriptableObject
 
     public SheetSO Get(string name)
     {
-        return sheets.Find(x => x.name == name);
+        return sheets.Find(x => x.SheetName == name);
     }
 }

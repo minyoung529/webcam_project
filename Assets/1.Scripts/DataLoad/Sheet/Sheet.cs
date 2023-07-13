@@ -25,7 +25,7 @@ public class Sheet<T>
         }
     }
 
-    public void Load(string sheetName, Action<List<T>> onComplete)
+    public void Load(string sheetName, Action<List<T>> onComplete = null)
     {
         // Set List가 가장 먼저 실행되어야 한다
         Action<List<T>> callback = SetList + onComplete;
