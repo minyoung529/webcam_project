@@ -10,10 +10,13 @@
     {
       "name": "iBicha",
       "url": "https://registry.npmjs.com",
-      "scopes": [ "com.ibicha" ]
+      "scopes": [
+        "com.ibicha"
+      ]
     }
   ],
   "dependencies": {
+    "com.ibicha.youtube-player": "2.0.2",
     "com.unity.2d.sprite": "1.0.0",
     "com.unity.2d.tilemap": "1.0.0",
     "com.unity.addressables": "1.19.19",
@@ -30,7 +33,7 @@
     "com.unity.inputsystem": "1.4.4",
     "com.unity.mobile.android-logcat": "1.0.0",
     "com.unity.multiplayer-hlapi": "1.0.4",
-    "com.unity.purchasing": "2.0.6",
+    "com.unity.purchasing": "4.9.3",
     "com.unity.test-framework": "1.1.31",
     "com.unity.textmeshpro": "3.0.6",
     "com.unity.timeline": "1.6.4",
@@ -77,7 +80,6 @@
     "com.unity.modules.video": "1.0.0",
     "com.unity.modules.vr": "1.0.0",
     "com.unity.modules.wind": "1.0.0",
-    "com.unity.modules.xr": "1.0.0",
-    "com.ibicha.youtube-player": "2.0.2"
+    "com.unity.modules.xr": "1.0.0"
   }
 }
