@@ -62,15 +62,16 @@ public class ChatManager : MonoBehaviour
         else
             bubble = otherTyping;
 
-        bubble.gameObject.SetActive(true);
-        bubble.transform.SetAsLastSibling();
-
-        LastArea = bubble;
+        if (picture != null && bubble.UserImage != null)
+            bubble.UserImage.sprite = picture;
         if (!isSend)
         {
             bubble.UserName = user;
             bubble.UserNameText.text = bubble.UserName;
         }
+
+        bubble.gameObject.SetActive(true);
+        bubble.transform.SetAsLastSibling();
 
         StartCoroutine(ScrollDelay(scrollbar));
     }
@@ -173,7 +174,7 @@ public class ChatManager : MonoBehaviour
         //타인이 같은 시간에 보냈으면 프사, 이름 없애기
         if (!isSend)
         {
-            bubble.UserImage.gameObject.SetActive(!isSameUser);
+            bubble.UserImageObj.SetActive(!isSameUser);
             bubble.UserNameText.gameObject.SetActive(!isSameUser);
             bubble.UserNameText.text = bubble.UserName;
         }
@@ -184,7 +185,6 @@ public class ChatManager : MonoBehaviour
     /// </summary>
     private void FitTextHeight(Bubble bubble)
     {
-
         float X = bubble.TextRect.sizeDelta.x + 42;
         float Y = bubble.TextRect.sizeDelta.y;
         if (Y > 60) //위 아래 여백이 원래 여백 초과 == 두 줄 이상

@@ -21,13 +21,13 @@ public class ChatEditor : Editor
 
         if (GUILayout.Button("보내기", GUILayout.Width(60)) && text.Trim() != "")
         {
-            chatManager.TestChat(true, text, "나", ReactionType.None);
+            chatManager.TestChat(true, text, "나", null, ReactionType.None);
             text = "";
             GUI.FocusControl(null);
         }
         if (GUILayout.Button("받기", GUILayout.Width(60)) && text.Trim() != "")
         {
-            chatManager.TestChat(false, text, "미녕",ReactionType.None);
+            chatManager.TestChat(false, text, "미녕",null,ReactionType.None);
             text = "";
             GUI.FocusControl(null);
         }
