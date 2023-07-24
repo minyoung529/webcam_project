@@ -8,6 +8,9 @@ using UnityEngine;
 using UnityEngine.Android;
 using UnityEngine.UI;
 
+/// <summary>
+/// 캡쳐 버튼 (캡쳐해서 갤러리 또는 폴더에 저장)
+/// </summary>
 public class CaptureButton : MonoBehaviour
 {
     [SerializeField] private Image screenFade;

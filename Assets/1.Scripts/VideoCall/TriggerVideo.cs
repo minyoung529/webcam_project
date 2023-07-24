@@ -7,6 +7,12 @@ using UnityEngine.AddressableAssets;
 using UnityEngine.Video;
 using YoutubePlayer;
 
+/// <summary>
+/// 영상 링크 받아서 실행
+/// 
+/// - Trigger() 시 실행
+/// - ChangeVideoURL() 함수로 링크 바꾸기
+/// </summary>
 public class TriggerVideo : MonoBehaviour
 {
     [SerializeField] private string urlString = "";
@@ -32,6 +38,7 @@ public class TriggerVideo : MonoBehaviour
     [ContextMenu("Trigger")]
     public void Trigger()
     {
+        if (urlString == "") return;
         video.PlayYoutubeVideoAsync(urlString);
     }
 

@@ -5,6 +5,9 @@ using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using UnityEngine.UI;
 
+/// <summary>
+/// 영상통화 받아서 Character Data UI에 Update
+/// </summary>
 public class RecieveVideoCall : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI nameText;
