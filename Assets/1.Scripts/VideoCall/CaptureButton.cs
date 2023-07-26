@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Analytics;
 using UnityEngine.Android;
 using UnityEngine.UI;
 
@@ -43,11 +44,13 @@ public class CaptureButton : MonoBehaviour
         {
             ScreenShot();
         });
+        screenFade.gameObject.SetActive(false);
     }
 
 
     public void ScreenShot()
     {
+        screenFade.gameObject.SetActive(true);
         CheckPermission(Permission.ExternalStorageRead);
     }
 

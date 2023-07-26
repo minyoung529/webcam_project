@@ -1,43 +1,126 @@
+using OpenCVForUnity.VideoModule;
+using System.Collections;
 using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
-using UnityEngine.AddressableAssets;
-using UnityEngine.ResourceManagement.AsyncOperations;
+using UnityEngine.TextCore.Text;
 using UnityEngine.UI;
 
-/// <summary>
-/// 영상통화 받아서 Character Data UI에 Update
-/// </summary>
 public class RecieveVideoCall : MonoBehaviour
 {
-    [SerializeField] private TextMeshProUGUI nameText;
-    [SerializeField] private Image profileImage;
+    [Header("Recieve Call")]
+    [SerializeField] private GameObject recievePanel;
 
-    private Character character;
+    [Header("Play Call")]
+    [SerializeField] private GameObject callingPanel;
+    [SerializeField] private PlayVideoCall videoCall;
+
+    private Character sender;
+    private CanvasGroup canvas;
+
+    private Sheet<VideoData> sheet = new();
+    private Dictionary<string, VideoData> videoDatas;
 
     private void Awake()
     {
+        canvas = GetComponent<CanvasGroup>();
+        canvas.alpha = 0.0f;
+
         EventManager<List<Character>>.StartListening(EventName.OnCharacterLoadComplete, Init);
     }
+    private void Start()
+    {
+        videoDatas = new Dictionary<string, VideoData>();
+        sheet.Load(SheetName.VIDEO_TEMPLATE, VideoURLLog);
+    }
+
+    [ContextMenu("Call")]
+    private void Test()
+    {
+        Character send = Character.GetCharacter(CharacterName.NamSoJeong);
+        EventManager<Character>.TriggerEvent(EventName.OnCallingVideoCall, send);
+    }
+
+    // Change Calling Sender
+    public void ChangeCallingCharacter(Character character)
+    {
+        sender = character;
+    }
+    public void ChangeCallingCharacter(CharacterName name)
+    {
+        sender = Character.GetCharacter(name);
+    }
+
+    // Yes Call
+    public void Calling()
+    {
+        if (sender == null) return;
+
+        callingPanel.SetActive(true);
+        recievePanel.SetActive(false);
+
+        string videoName = sender.name + "_" + "인사";
+        videoCall.Trigger(sender, videoDatas[videoName].GetVideoURL);
+        EventManager.StartListening(EventName.OnBreakVideoCall, BreakVideoCall);
+    }
+    
+    // Break Call
+    public void BreakVideoCall()
+    {
+        Debug.Log("Break Call");
+        canvas.alpha = 0;
+
+        videoCall.StopVideo();
+        sender = null;
+
+        EventManager.StopListening(EventName.OnBreakVideoCall, BreakVideoCall);
+    }
+
+    #region VideoCall
     private void Init(List<Character> list)
     {
-        if(list.Count < 1) return;
-        character = list[0];
+        if (list.Count < 1) return;
 
-        SetName();
-        Addressables.LoadAssetAsync<Sprite>(character.profileLink.Trim()).Completed += SetSprite;
+        sender = list[0];
+        EventManager<Character>.StartListening(EventName.OnCallingVideoCall, CallingVideoCall);
     }
-    private void SetSprite(AsyncOperationHandle<Sprite> handle)
+    private void CallingVideoCall(Character character)
     {
-        profileImage.sprite = handle.Result;
+        sender = character;
+
+        canvas.alpha = 1;
+        recievePanel.SetActive(true);
+        callingPanel.SetActive(false);
+
+        Debug.Log(sender + " : Calling VideoCall");
     }
-    private void SetName()
+    #endregion
+
+    #region Load Video Sheet
+    private void VideoURLLog(List<VideoData> datas)
     {
-        nameText.SetText(character.name);
+        StartCoroutine(GetURLLog());
     }
+    private IEnumerator GetURLLog()
+    {
+        for (int i = 0; i < sheet.Length; i++)
+        {
+            yield return new WaitForSeconds(0.1f);
+
+            VideoType type = new VideoType();
+            type.videosURL = sheet[i].GetVideoURL;
+
+            videoDatas.Add(sheet[i].videoName, sheet[i]);
+        }
+    }
+    #endregion
 
     private void OnDestroy()
     {
         EventManager<List<Character>>.StopListening(EventName.OnCharacterLoadComplete, Init);
+        EventManager<Character>.StopListening(EventName.OnCallingVideoCall, CallingVideoCall);
     }
+}
+public class VideoType
+{
+    public string videosURL;
 }

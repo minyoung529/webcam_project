@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public partial class VideoData
+public class VideoCall
 {
     private static Dictionary<int, object> videoDatas = new();
 
