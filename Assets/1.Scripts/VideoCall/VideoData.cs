@@ -5,15 +5,6 @@ using UnityEngine;
 public class VideoData
 {
     public string videoName;
-    private string videoURL;
+    public string videoURL;
     public string sender;
-
-    public string GetVideoURL { get { return videoURL; } }
-}
-
-public enum EpisodeType
-{
-    Introduce,
-
-    Count,
 }

@@ -1,33 +1,25 @@
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 
-public class VideoCall
+public partial class VideoCall
 {
-    private static Dictionary<int, object> videoDatas = new();
+    private static Dictionary<VideoName, VideoData> videoDatas;
 
-    public static void Set(VideoDataType videoDataType, object obj)
+    public static Character GetVideoCallSender(VideoName video)
     {
-        videoDatas[GetHash(videoDataType)] = obj;
+        string[] send = video.ToString().Split('_');
+        return Character.GetCharacter(send[0]);
     }
 
-    public static EpisodeType SetEpisode(string videoName)
+    public static string GetVideoURL(VideoName video)
     {
-        string[] video = videoName.Split('$');
-        
-        return EpisodeType.Introduce;
-    }
-
-    public static int GetHash<T>(T value)
-    {
-        return value.ToString().GetHashCode();
+        return videoDatas[video].videoURL;
     }
 }
-public enum VideoDataType
+
+public enum VideoName
 {
-    name,    // 영상 이름
-    url,     // 영상 링크
-    sender,  // 영상 보낸 사람
+    NamSoJeong_Introduce,
+    LeeMinYoung_Introduce,
 
     Count
 }

@@ -1,126 +1,83 @@
-using OpenCVForUnity.VideoModule;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.TextCore.Text;
-using UnityEngine.UI;
 
 public class RecieveVideoCall : MonoBehaviour
 {
     [Header("Recieve Call")]
     [SerializeField] private GameObject recievePanel;
+    [SerializeField] private UpdateCharacterDataProfile recieveCharacterProfile;
 
     [Header("Play Call")]
     [SerializeField] private GameObject callingPanel;
     [SerializeField] private PlayVideoCall videoCall;
+    [SerializeField] private UpdateCharacterDataProfile callCharacterProfile;
 
-    private Character sender;
     private CanvasGroup canvas;
+    private VideoName video = VideoName.Count;
 
-    private Sheet<VideoData> sheet = new();
-    private Dictionary<string, VideoData> videoDatas;
+    private bool load = false;
 
     private void Awake()
     {
         canvas = GetComponent<CanvasGroup>();
         canvas.alpha = 0.0f;
 
-        EventManager<List<Character>>.StartListening(EventName.OnCharacterLoadComplete, Init);
-    }
-    private void Start()
-    {
-        videoDatas = new Dictionary<string, VideoData>();
-        sheet.Load(SheetName.VIDEO_TEMPLATE, VideoURLLog);
+        EventManager.StartListening(EventName.OnVideoLoadComplete, Init);
     }
 
-    [ContextMenu("Call")]
+    private void Init()
+    {
+        load = true;
+    }
+
+    [ContextMenu("Test")]
     private void Test()
     {
-        Character send = Character.GetCharacter(CharacterName.NamSoJeong);
-        EventManager<Character>.TriggerEvent(EventName.OnCallingVideoCall, send);
+        Recieve(VideoName.NamSoJeong_Introduce);
     }
 
-    // Change Calling Sender
-    public void ChangeCallingCharacter(Character character)
+    public void Recieve(VideoName video)
     {
-        sender = character;
-    }
-    public void ChangeCallingCharacter(CharacterName name)
-    {
-        sender = Character.GetCharacter(name);
-    }
+        if (!load)
+        {
+            Debug.LogWarning("Video Loding Not Complete");
+            return;
+        }
 
-    // Yes Call
-    public void Calling()
-    {
-        if (sender == null) return;
+            this.video = video;
+        Character sender = VideoCall.GetVideoCallSender(video);
 
-        callingPanel.SetActive(true);
-        recievePanel.SetActive(false);
-
-        string videoName = sender.name + "_" + "ภฮป็";
-        videoCall.Trigger(sender, videoDatas[videoName].GetVideoURL);
-        EventManager.StartListening(EventName.OnBreakVideoCall, BreakVideoCall);
-    }
-    
-    // Break Call
-    public void BreakVideoCall()
-    {
-        Debug.Log("Break Call");
-        canvas.alpha = 0;
-
-        videoCall.StopVideo();
-        sender = null;
-
-        EventManager.StopListening(EventName.OnBreakVideoCall, BreakVideoCall);
-    }
-
-    #region VideoCall
-    private void Init(List<Character> list)
-    {
-        if (list.Count < 1) return;
-
-        sender = list[0];
-        EventManager<Character>.StartListening(EventName.OnCallingVideoCall, CallingVideoCall);
-    }
-    private void CallingVideoCall(Character character)
-    {
-        sender = character;
+        recieveCharacterProfile.Trigger(sender);
+        callCharacterProfile.Trigger(sender);
 
         canvas.alpha = 1;
         recievePanel.SetActive(true);
         callingPanel.SetActive(false);
-
-        Debug.Log(sender + " : Calling VideoCall");
     }
-    #endregion
 
-    #region Load Video Sheet
-    private void VideoURLLog(List<VideoData> datas)
+    // Call
+    public void Calling()
     {
-        StartCoroutine(GetURLLog());
+        if (video == VideoName.Count) return;
+
+        callingPanel.SetActive(true);
+        recievePanel.SetActive(false);
+
+        videoCall.Trigger(VideoCall.GetVideoURL(video));
     }
-    private IEnumerator GetURLLog()
+
+    // Break Call
+    public void BreakVideoCall()
     {
-        for (int i = 0; i < sheet.Length; i++)
-        {
-            yield return new WaitForSeconds(0.1f);
+        canvas.alpha = 0;
 
-            VideoType type = new VideoType();
-            type.videosURL = sheet[i].GetVideoURL;
-
-            videoDatas.Add(sheet[i].videoName, sheet[i]);
-        }
+        videoCall.StopVideo();
+       video = VideoName.Count;
     }
-    #endregion
 
     private void OnDestroy()
     {
-        EventManager<List<Character>>.StopListening(EventName.OnCharacterLoadComplete, Init);
-        EventManager<Character>.StopListening(EventName.OnCallingVideoCall, CallingVideoCall);
+        EventManager.StopListening(EventName.OnVideoLoadComplete, Init);
     }
-}
-public class VideoType
-{
-    public string videosURL;
 }
