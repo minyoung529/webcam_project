@@ -18,6 +18,8 @@ public partial class ChattingData
     public string fileAddress;
     public ReactionType reactionType;
 
+    public int selectedIndx = -1;
+
     public string GetText()
     {
         switch (chattingType)
@@ -28,12 +30,9 @@ public partial class ChattingData
             case ChattingType.CalculateSelect:
                 return CalculateSelectedText();
 
-            // Test Code
             case ChattingType.Select:
-                int random = Random.Range(0, 3);
-                Debug.Log($"·£´ý ¼¿·ºÆÃ: {random}");
-                ChattingData.Set(ChattingDataType.PrevResponse, random);
-                return GetSelectedText(random);
+                ChattingData.Set(ChattingDataType.PrevResponse, selectedIndx);
+                return GetSelectedText(selectedIndx);
 
             default:
                 return "";
