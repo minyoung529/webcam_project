@@ -934,6 +934,13 @@ namespace OpenCVForUnity.UnityUtils.Helper
             return hasInitDone ? webCamTexture : null;
         }
 
+        public virtual Texture2D GetWebcamTexture2D()
+        {
+            Mat webCamTextureMat = GetMat();
+            return new Texture2D(webCamTextureMat.cols(), webCamTextureMat.rows(), TextureFormat.RGBA32, false);
+        }
+
+
         /// <summary>
         /// Returns the active WebcamDevice.
         /// </summary>

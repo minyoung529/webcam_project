@@ -32,7 +32,7 @@ public partial class ChattingData
             case ChattingType.Select:
                 int random = Random.Range(0, 3);
                 Debug.Log($"·£´ý ¼¿·ºÆÃ: {random}");
-                ChattingData.Set(ChattingDataType.PrevResponse, random);
+                ChattingData.Set(InformationType.PrevResponse, random);
                 return GetSelectedText(random);
 
             default:
