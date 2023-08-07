@@ -1,7 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+/// <summary>
+/// 
+/// 영상통화 흐름 스크립트 (받고 수락하고 끊고)
+/// 
+/// </summary>
 public class RecieveVideoCall : MonoBehaviour
 {
     [Header("Recieve Call")]
@@ -37,6 +41,9 @@ public class RecieveVideoCall : MonoBehaviour
         Recieve(VideoName.NamSoJeong_Introduce);
     }
 
+    /// <summary>
+    /// 영상통화 신호 연결 상태로 만드는 함수
+    /// </summary>
     public void Recieve(VideoName video)
     {
         if (!load)
@@ -45,8 +52,8 @@ public class RecieveVideoCall : MonoBehaviour
             return;
         }
 
-            this.video = video;
-        Character sender = VideoCall.GetVideoCallSender(video);
+        this.video = video;
+        Character sender = GetURLFile.GetVideoCallSender(video);
 
         recieveCharacterProfile.Trigger(sender);
         callCharacterProfile.Trigger(sender);
@@ -56,7 +63,9 @@ public class RecieveVideoCall : MonoBehaviour
         callingPanel.SetActive(false);
     }
 
-    // Call
+    /// <summary>
+    /// 영상통화 수락하는 함수
+    /// </summary>
     public void Calling()
     {
         if (video == VideoName.Count) return;
@@ -64,15 +73,17 @@ public class RecieveVideoCall : MonoBehaviour
         callingPanel.SetActive(true);
         recievePanel.SetActive(false);
 
-        videoCall.Trigger(VideoCall.GetVideoURL(video));
+        videoCall.Trigger(GetURLFile.GetVideoURL(video));
     }
 
-    // Break Call
+    /// <summary>
+    /// 영상통화 끊는 함수
+    /// </summary>
     public void BreakVideoCall()
     {
         canvas.alpha = 0;
 
-        videoCall.StopVideo();
+       videoCall.StopVideo();
        video = VideoName.Count;
     }
 

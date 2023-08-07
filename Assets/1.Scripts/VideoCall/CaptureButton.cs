@@ -47,15 +47,18 @@ public class CaptureButton : MonoBehaviour
         screenFade.gameObject.SetActive(false);
     }
 
-
+    /// <summary>
+    /// 캡쳐 실행 함수
+    /// </summary>
     public void ScreenShot()
     {
         screenFade.gameObject.SetActive(true);
         CheckPermission(Permission.ExternalStorageRead);
     }
 
-    
-    // 안드로이드 : 저장소 권한 확인하고 요청하기
+    /// <summary>
+    /// 권한 확인하는 함수
+    /// </summary>
     private void CheckPermission(string permission)
     {
         if (Permission.HasUserAuthorizedPermission(permission) == false)
@@ -110,6 +113,9 @@ public class CaptureButton : MonoBehaviour
         CaptureEffect();
     }
 
+    /// <summary>
+    /// 새로고침 하는 함수
+    /// </summary>
     private void RefreshAndroidGallery(string imageFilePath)
     {
 #if UNITY_EDITOR
@@ -124,6 +130,9 @@ public class CaptureButton : MonoBehaviour
 #endif
     }
 
+    /// <summary>
+    /// 캡쳐 시 번쩍이는 이펙트
+    /// </summary>
     private void CaptureEffect()
     {
         screenFade.color = Color.white;
