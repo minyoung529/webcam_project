@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(FaceController))]
 public class AnalyzerController : MonoBehaviour
 {
     private WebcamAnalyzer[] analyzers;
@@ -13,7 +14,9 @@ public class AnalyzerController : MonoBehaviour
         webcamTextureHelper = GetComponent<WebCamTextureToMatHelper>();
         analyzers = GetComponents<WebcamAnalyzer>();
 
-        foreach(WebcamAnalyzer analyzer in analyzers)
+        webcamTextureHelper.onInitialized.AddListener(GetComponent<FaceController>().Initialize);
+
+        foreach (WebcamAnalyzer analyzer in analyzers)
         {
             webcamTextureHelper.onInitialized.AddListener(analyzer.Initialize);
             webcamTextureHelper.onDisposed.AddListener(analyzer.OnDisposed);

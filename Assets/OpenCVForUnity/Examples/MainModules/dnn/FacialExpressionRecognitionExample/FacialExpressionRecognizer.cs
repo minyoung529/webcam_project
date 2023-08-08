@@ -231,7 +231,6 @@ namespace OpenCVForUnityExample.DnnModel
 
             ClassificationData bmData = getBestMatchData(results[0]);
 
-            Debug.Log(getClassLabel(bmData.cls));
             return getClassLabel(bmData.cls);
         }
 

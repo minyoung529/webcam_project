@@ -29,19 +29,9 @@ namespace DlibFaceLandmarkDetectorExample
         public bool displayFacePoints;
 
         /// <summary>
-        /// The display face points toggle.
-        /// </summary>
-        public Toggle displayFacePointsToggle;
-
-        /// <summary>
         /// Determines if displays display axes
         /// </summary>
         public bool displayAxes;
-
-        /// <summary>
-        /// The display axes toggle.
-        /// </summary>
-        public Toggle displayAxesToggle;
 
         /// <summary>
         /// Determines if displays head.
@@ -49,47 +39,12 @@ namespace DlibFaceLandmarkDetectorExample
         public bool displayHead;
 
         /// <summary>
-        /// The display head toggle.
-        /// </summary>
-        public Toggle displayHeadToggle;
-
-        /// <summary>
         /// Determines if displays effects.
         /// </summary>
         public bool displayEffects;
 
-        /// <summary>
-        /// The display effects toggle.
-        /// </summary>
-        public Toggle displayEffectsToggle;
 
         [Space(10)]
-
-        /// <summary>
-        /// The axes.
-        /// </summary>
-        public GameObject axes;
-
-        /// <summary>
-        /// The head.
-        /// </summary>
-        public GameObject head;
-
-        /// <summary>
-        /// The right eye.
-        /// </summary>
-        public GameObject rightEye;
-
-        /// <summary>
-        /// The left eye.
-        /// </summary>
-        public GameObject leftEye;
-
-        /// <summary>
-        /// The mouth.
-        /// </summary>
-        public GameObject mouth;
-
         /// <summary>
         /// The AR camera.
         /// </summary>
@@ -115,29 +70,14 @@ namespace DlibFaceLandmarkDetectorExample
         public bool enableDownScale;
 
         /// <summary>
-        /// The enable downscale toggle.
-        /// </summary>
-        public Toggle enableDownScaleToggle;
-
-        /// <summary>
         /// Determines if enable skipframe.
         /// </summary>
         public bool enableSkipFrame;
 
         /// <summary>
-        /// The enable skipframe toggle.
-        /// </summary>
-        public Toggle enableSkipFrameToggle;
-
-        /// <summary>
         /// Determines if enable low pass filter.
         /// </summary>
         public bool enableLowPassFilter;
-
-        /// <summary>
-        /// The enable low pass filter toggle.
-        /// </summary>
-        public Toggle enableLowPassFilterToggle;
 
         /// <summary>
         /// The position low pass. (Value in meters)
@@ -155,11 +95,6 @@ namespace DlibFaceLandmarkDetectorExample
         /// The old pose data.
         /// </summary>
         PoseData oldPoseData;
-
-        /// <summary>
-        /// The mouth particle system.
-        /// </summary>
-        ParticleSystem[] mouthParticleSystem;
 
         /// <summary>
         /// The texture.
@@ -252,11 +187,6 @@ namespace DlibFaceLandmarkDetectorExample
         ImageOptimizationHelper imageOptimizationHelper;
 
         /// <summary>
-        /// The FPS monitor.
-        /// </summary>
-        FpsMonitor fpsMonitor;
-
-        /// <summary>
         /// The detection result.
         /// </summary>
         List<UnityEngine.Rect> detectionResult;
@@ -275,22 +205,22 @@ namespace DlibFaceLandmarkDetectorExample
         IEnumerator getFilePath_Coroutine;
 #endif
 
+        private bool _isRightEyeOpen = false;
+        private bool _isLeftEyeOpen = false;
+        private bool _isMouthOpen = false;
+
+        private FaceController faceController;
+
+        private void Awake()
+        {
+            faceController = gameObject.GetComponent<FaceController>();
+        }
+
         // Use this for initialization
         void Start()
         {
-            fpsMonitor = GetComponent<FpsMonitor>();
-
-            displayFacePointsToggle.isOn = displayFacePoints;
-            displayAxesToggle.isOn = displayAxes;
-            displayHeadToggle.isOn = displayHead;
-            displayEffectsToggle.isOn = displayEffects;
-            enableDownScaleToggle.isOn = enableDownScale;
-            enableSkipFrameToggle.isOn = enableSkipFrame;
-            enableLowPassFilterToggle.isOn = enableLowPassFilter;
-
             imageOptimizationHelper = gameObject.GetComponent<ImageOptimizationHelper>();
             webCamTextureToMatHelper = gameObject.GetComponent<WebCamTextureToMatHelper>();
-
 
             dlibShapePredictorFileName = DlibFaceLandmarkDetectorExample.dlibShapePredictorFileName;
 #if UNITY_WEBGL
@@ -372,15 +302,6 @@ namespace DlibFaceLandmarkDetectorExample
 
             gameObject.transform.localScale = new Vector3(webCamTextureMat.cols(), webCamTextureMat.rows(), 1);
             Debug.Log("Screen.width " + Screen.width + " Screen.height " + Screen.height + " Screen.orientation " + Screen.orientation);
-
-            if (fpsMonitor != null)
-            {
-                fpsMonitor.Add("dlib shape predictor", dlibShapePredictorFileName);
-                fpsMonitor.Add("width", webCamTextureToMatHelper.GetWidth().ToString());
-                fpsMonitor.Add("height", webCamTextureToMatHelper.GetHeight().ToString());
-                fpsMonitor.Add("orientation", Screen.orientation.ToString());
-            }
-
 
             float width = webCamTextureMat.width();
             float height = webCamTextureMat.height();
@@ -472,15 +393,6 @@ namespace DlibFaceLandmarkDetectorExample
 
             invertZM = Matrix4x4.TRS(Vector3.zero, Quaternion.identity, new Vector3(1, 1, -1));
             Debug.Log("invertZM " + invertZM.ToString());
-
-
-            axes?.SetActive(false);
-            head?.SetActive(false);
-            rightEye?.SetActive(false);
-            leftEye?.SetActive(false);
-            mouth?.SetActive(false);
-
-            mouthParticleSystem = mouth.GetComponentsInChildren<ParticleSystem>(true);
         }
 
         /// <summary>
@@ -507,11 +419,6 @@ namespace DlibFaceLandmarkDetectorExample
         public void OnWebCamTextureToMatHelperErrorOccurred(WebCamTextureToMatHelper.ErrorCode errorCode)
         {
             Debug.Log("OnWebCamTextureToMatHelperErrorOccurred " + errorCode);
-
-            if (fpsMonitor != null)
-            {
-                fpsMonitor.consoleText = "ErrorCode: " + errorCode;
-            }
         }
 
         // Update is called once per frame
@@ -672,11 +579,6 @@ namespace DlibFaceLandmarkDetectorExample
                             new Point(points[0].x, points[0].y),//r eye (Tail of the eye)
                             new Point(points[4].x, points[4].y)//nose (Subnasale)
                         );
-
-                        if (fpsMonitor != null)
-                        {
-                            fpsMonitor.consoleText = "This example supports mainly the face landmark points of 68/17/6 points.";
-                        }
                     }
 
                     // estimate head pose
@@ -712,38 +614,36 @@ namespace DlibFaceLandmarkDetectorExample
 
                     if (!isNotInViewport)
                     {
-                        if (displayHead)
-                            head?.SetActive(true);
-                        if (displayAxes)
-                            axes?.SetActive(true);
-
                         if (displayEffects)
                         {
-                            rightEye?.SetActive(isRightEyeOpen);
-                            leftEye?.SetActive(isLeftEyeOpen);
+                            if (_isRightEyeOpen != isRightEyeOpen)
+                            {
+                                if (isRightEyeOpen)
+                                    faceController.Event.Trigger((int)FaceEvent.RightEyeOpen);
+                                else
+                                    faceController.Event.Trigger((int)FaceEvent.RightEyeClose);
 
-                            if (isMouthOpen)
-                            {
-                                mouth.SetActive(true);
-                                foreach (ParticleSystem ps in mouthParticleSystem)
-                                {
-                                    var em = ps.emission;
-                                    em.enabled = true;
-#if UNITY_5_5_OR_NEWER
-                                    var main = ps.main;
-                                    main.startSizeMultiplier = 20;
-#else
-                                    ps.startSize = 20;
-#endif
-                                }
+                                _isRightEyeOpen = isRightEyeOpen;
                             }
-                            else
+
+                            if (_isLeftEyeOpen != isLeftEyeOpen)
                             {
-                                foreach (ParticleSystem ps in mouthParticleSystem)
-                                {
-                                    var em = ps.emission;
-                                    em.enabled = false;
-                                }
+                                if (isLeftEyeOpen)
+                                    faceController.Event.Trigger((int)FaceEvent.LeftEyeOpen);
+                                else
+                                    faceController.Event.Trigger((int)FaceEvent.LeftEyeClose);
+
+                                _isLeftEyeOpen = isLeftEyeOpen;
+                            }
+
+                            if (_isMouthOpen != isMouthOpen)
+                            {
+                                if (isMouthOpen)
+                                    faceController.Event.Trigger((int)FaceEvent.MouthOpen);
+                                else
+                                    faceController.Event.Trigger((int)FaceEvent.MouthClose);
+
+                                _isMouthOpen = isMouthOpen;
                             }
                         }
 
@@ -813,154 +713,12 @@ namespace DlibFaceLandmarkDetectorExample
 #endif
         }
 
-        /// <summary>
-        /// Raises the back button click event.
-        /// </summary>
-        public void OnBackButtonClick()
+        public void Active(GameObject obj, bool active)
         {
-            SceneManager.LoadScene("DlibFaceLandmarkDetectorExample");
-        }
+            if (obj == null)
+                return;
 
-        /// <summary>
-        /// Raises the play button click event.
-        /// </summary>
-        public void OnPlayButtonClick()
-        {
-            webCamTextureToMatHelper.Play();
-        }
-
-        /// <summary>
-        /// Raises the pause button click event.
-        /// </summary>
-        public void OnPauseButtonClick()
-        {
-            webCamTextureToMatHelper.Pause();
-        }
-
-        /// <summary>
-        /// Raises the stop button click event.
-        /// </summary>
-        public void OnStopButtonClick()
-        {
-            webCamTextureToMatHelper.Stop();
-        }
-
-        /// <summary>
-        /// Raises the change camera button click event.
-        /// </summary>
-        public void OnChangeCameraButtonClick()
-        {
-            webCamTextureToMatHelper.requestedIsFrontFacing = !webCamTextureToMatHelper.requestedIsFrontFacing;
-        }
-
-        /// <summary>
-        /// Raises the display face points toggle value changed event.
-        /// </summary>
-        public void OnDisplayFacePointsToggleValueChanged()
-        {
-            if (displayFacePointsToggle.isOn)
-            {
-                displayFacePoints = true;
-            }
-            else
-            {
-                displayFacePoints = false;
-            }
-        }
-
-        /// <summary>
-        /// Raises the display axes toggle value changed event.
-        /// </summary>
-        public void OnDisplayAxesToggleValueChanged()
-        {
-            if (displayAxesToggle.isOn)
-            {
-                displayAxes = true;
-            }
-            else
-            {
-                displayAxes = false;
-                axes?.SetActive(false);
-            }
-        }
-
-        /// <summary>
-        /// Raises the display head toggle value changed event.
-        /// </summary>
-        public void OnDisplayHeadToggleValueChanged()
-        {
-            if (displayHeadToggle.isOn)
-            {
-                displayHead = true;
-            }
-            else
-            {
-                displayHead = false;
-                head?.SetActive(false);
-            }
-        }
-
-        /// <summary>
-        /// Raises the display effects toggle value changed event.
-        /// </summary>
-        public void OnDisplayEffectsToggleValueChanged()
-        {
-            if (displayEffectsToggle.isOn)
-            {
-                displayEffects = true;
-            }
-            else
-            {
-                displayEffects = false;
-                rightEye?.SetActive(false);
-                leftEye?.SetActive(false);
-                mouth?.SetActive(false);
-            }
-        }
-
-        /// <summary>
-        /// Raises the enable downscale toggle value changed event.
-        /// </summary>
-        public void OnEnableDownScaleToggleValueChanged()
-        {
-            if (enableDownScaleToggle.isOn)
-            {
-                enableDownScale = true;
-            }
-            else
-            {
-                enableDownScale = false;
-            }
-        }
-
-        /// <summary>
-        /// Raises the enable skipframe toggle value changed event.
-        /// </summary>
-        public void OnEnableSkipFrameToggleValueChanged()
-        {
-            if (enableSkipFrameToggle.isOn)
-            {
-                enableSkipFrame = true;
-            }
-            else
-            {
-                enableSkipFrame = false;
-            }
-        }
-
-        /// <summary>
-        /// Raises the enable low pass filter toggle value changed event.
-        /// </summary>
-        public void OnEnableLowPassFilterToggleValueChanged()
-        {
-            if (enableLowPassFilterToggle.isOn)
-            {
-                enableLowPassFilter = true;
-            }
-            else
-            {
-                enableLowPassFilter = false;
-            }
+            obj.SetActive(active);
         }
     }
 }

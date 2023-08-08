@@ -12,6 +12,7 @@ using UnityEngine;
 
 public enum Emotion
 {
+    None,
     Angry,
     Disgust,
     Fearful,
@@ -28,14 +29,29 @@ public class FacialExpressionAnalyzer : WebcamAnalyzer
     private FacialExpressionRecognizer recognizer;
 
     string facial_expression_recognition_model_filepath;
-
     protected static readonly string FACIAL_EXPRESSION_RECOGNITION_MODEL_FILENAME = "OpenCVForUnity/dnn/facial_expression_recognition_mobilefacenet_2022july.onnx";
+
+    private string curEmotion = "None";
 
     public override void Initialize()
     {
         base.Initialize();
 
-        recognizer = new FacialExpressionRecognizer(facial_expression_recognition_model_filepath, face_recognition_model_filepath, "");
+        recognizer = new FacialExpressionRecognizer(facial_expression_recognition_model_filepath, faceController.face_recognition_model_filepath, "");
+    }
+
+    private void Update()
+    {
+        if (runOnUpdate && initializeDone)
+        {
+            string calculated = (string)GetInformation();
+
+            if (curEmotion.ToString() != calculated)
+            {
+                faceController.Event.Trigger((int)FaceEvent.EmotionChanged, calculated);
+                curEmotion = calculated;
+            }
+        }
     }
 
     protected override IEnumerator GetChildFilePath_WEBGL()
@@ -48,7 +64,6 @@ public class FacialExpressionAnalyzer : WebcamAnalyzer
         facial_expression_recognition_model_filepath = Utils.getFilePath(FACIAL_EXPRESSION_RECOGNITION_MODEL_FILENAME);
     }
 
-
     protected override void OnChildDisposed()
     {
         recognizer?.dispose();
@@ -59,30 +74,33 @@ public class FacialExpressionAnalyzer : WebcamAnalyzer
     {
         base.Run();
 
-        if (string.IsNullOrEmpty(facial_expression_recognition_model_filepath) || string.IsNullOrEmpty(face_recognition_model_filepath))
+        if (string.IsNullOrEmpty(facial_expression_recognition_model_filepath) || string.IsNullOrEmpty(faceController.face_recognition_model_filepath))
         {
             Debug.LogError(FACIAL_EXPRESSION_RECOGNITION_MODEL_FILENAME + " or " + FACE_RECOGNITION_MODEL_FILENAME + " is not loaded. Please read ¡°StreamingAssets/OpenCVForUnity/dnn/setup_dnn_module.pdf¡± to make the necessary setup.");
         }
         else
         {
-            recognizer = new FacialExpressionRecognizer(facial_expression_recognition_model_filepath, face_recognition_model_filepath, "");
+            recognizer = new FacialExpressionRecognizer(facial_expression_recognition_model_filepath, faceController.face_recognition_model_filepath, "");
         }
     }
 
     public override object GetInformation()
     {
         Mat rgbaMat = webCamTextureToMatHelper.GetMat();
+        if (rgbaMat == null) return "Not Ready";
 
-        if (faceDetector == null || recognizer == null)
+        if (recognizer == null)
         {
             Imgproc.putText(rgbaMat, "model file is not loaded.", new Point(5, rgbaMat.rows() - 30), Imgproc.FONT_HERSHEY_SIMPLEX, 0.7, new Scalar(255, 255, 255, 255), 2, Imgproc.LINE_AA, false);
             Imgproc.putText(rgbaMat, "Please read console message.", new Point(5, rgbaMat.rows() - 10), Imgproc.FONT_HERSHEY_SIMPLEX, 0.7, new Scalar(255, 255, 255, 255), 2, Imgproc.LINE_AA, false);
         }
         else
         {
-            Imgproc.cvtColor(rgbaMat, bgrMat, Imgproc.COLOR_RGBA2BGR);
+            Imgproc.cvtColor(rgbaMat, faceController.BGRMat, Imgproc.COLOR_RGBA2BGR);
 
-            Mat faces = faceDetector.infer(bgrMat);
+            Mat faces = faceController.Face;
+
+            if (faces == null) return "Not Ready";
 
             List<Mat> expressions = new List<Mat>();
 
@@ -90,15 +108,14 @@ public class FacialExpressionAnalyzer : WebcamAnalyzer
             for (int i = 0; i < faces.rows(); ++i)
             {
                 // Facial expression recognizer inference
-                Mat facialExpression = recognizer.infer(bgrMat, faces.row(i));
+                Mat facialExpression = recognizer.infer(faceController.BGRMat, faces.row(i));
 
                 if (!facialExpression.empty())
                     expressions.Add(facialExpression);
             }
 
-            Imgproc.cvtColor(bgrMat, rgbaMat, Imgproc.COLOR_BGR2RGBA);
+            Imgproc.cvtColor(faceController.BGRMat, rgbaMat, Imgproc.COLOR_BGR2RGBA);
 
-            //faceDetector.visualize(rgbaMat, faces, false, true);
             return recognizer.GetData(expressions);
         }
         return null;
