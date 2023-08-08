@@ -222,7 +222,6 @@ namespace CVVTuber.Live2DCubism4
             GameObject Natori = GameObject.Find("Natori");
             if (Natori != null)
             {
-
                 bool allComplete = true;
 
                 CubismModel live2DCubism4Model = Natori.GetComponent<CubismModel>();
