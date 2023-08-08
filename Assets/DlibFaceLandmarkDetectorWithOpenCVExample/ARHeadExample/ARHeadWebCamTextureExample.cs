@@ -474,11 +474,11 @@ namespace DlibFaceLandmarkDetectorExample
             Debug.Log("invertZM " + invertZM.ToString());
 
 
-            axes.SetActive(false);
-            head.SetActive(false);
-            rightEye.SetActive(false);
-            leftEye.SetActive(false);
-            mouth.SetActive(false);
+            axes?.SetActive(false);
+            head?.SetActive(false);
+            rightEye?.SetActive(false);
+            leftEye?.SetActive(false);
+            mouth?.SetActive(false);
 
             mouthParticleSystem = mouth.GetComponentsInChildren<ParticleSystem>(true);
         }
@@ -712,16 +712,15 @@ namespace DlibFaceLandmarkDetectorExample
 
                     if (!isNotInViewport)
                     {
-
                         if (displayHead)
-                            head.SetActive(true);
+                            head?.SetActive(true);
                         if (displayAxes)
-                            axes.SetActive(true);
+                            axes?.SetActive(true);
 
                         if (displayEffects)
                         {
-                            rightEye.SetActive(isRightEyeOpen);
-                            leftEye.SetActive(isLeftEyeOpen);
+                            rightEye?.SetActive(isRightEyeOpen);
+                            leftEye?.SetActive(isLeftEyeOpen);
 
                             if (isMouthOpen)
                             {
@@ -881,7 +880,7 @@ namespace DlibFaceLandmarkDetectorExample
             else
             {
                 displayAxes = false;
-                axes.SetActive(false);
+                axes?.SetActive(false);
             }
         }
 
@@ -897,7 +896,7 @@ namespace DlibFaceLandmarkDetectorExample
             else
             {
                 displayHead = false;
-                head.SetActive(false);
+                head?.SetActive(false);
             }
         }
 
@@ -913,9 +912,9 @@ namespace DlibFaceLandmarkDetectorExample
             else
             {
                 displayEffects = false;
-                rightEye.SetActive(false);
-                leftEye.SetActive(false);
-                mouth.SetActive(false);
+                rightEye?.SetActive(false);
+                leftEye?.SetActive(false);
+                mouth?.SetActive(false);
             }
         }
 
