@@ -23,27 +23,6 @@ namespace DlibFaceLandmarkDetectorExample
     [RequireComponent(typeof(WebCamTextureToMatHelper), typeof(ImageOptimizationHelper))]
     public class ARHeadWebCamTextureExample : MonoBehaviour
     {
-        /// <summary>
-        /// Determines if displays face points.
-        /// </summary>
-        public bool displayFacePoints;
-
-        /// <summary>
-        /// Determines if displays display axes
-        /// </summary>
-        public bool displayAxes;
-
-        /// <summary>
-        /// Determines if displays head.
-        /// </summary>
-        public bool displayHead;
-
-        /// <summary>
-        /// Determines if displays effects.
-        /// </summary>
-        public bool displayEffects;
-
-
         [Space(10)]
         /// <summary>
         /// The AR camera.
@@ -236,6 +215,8 @@ namespace DlibFaceLandmarkDetectorExample
             dlibShapePredictorFilePath = DlibFaceLandmarkDetector.UnityUtils.Utils.getFilePath(dlibShapePredictorFileName);
             Run();
 #endif
+
+            ARCamera.transform.SetParent(null);
         }
 
         private void Run()
@@ -476,8 +457,8 @@ namespace DlibFaceLandmarkDetectorExample
 
                 if (points != null)
                 {
-                    if (displayFacePoints)
-                        OpenCVForUnityUtils.DrawFaceLandmark(rgbaMat, points, new Scalar(0, 255, 0, 255), 2);
+                    //if (displayFacePoints)
+                    //    OpenCVForUnityUtils.DrawFaceLandmark(rgbaMat, points, new Scalar(0, 255, 0, 255), 2);
 
                     MatOfPoint3f objectPoints = null;
                     bool isRightEyeOpen = false;
@@ -614,37 +595,34 @@ namespace DlibFaceLandmarkDetectorExample
 
                     if (!isNotInViewport)
                     {
-                        if (displayEffects)
+                        if (_isRightEyeOpen != isRightEyeOpen)
                         {
-                            if (_isRightEyeOpen != isRightEyeOpen)
-                            {
-                                if (isRightEyeOpen)
-                                    faceController.Event.Trigger((int)FaceEvent.RightEyeOpen);
-                                else
-                                    faceController.Event.Trigger((int)FaceEvent.RightEyeClose);
+                            if (isRightEyeOpen)
+                                faceController.Event.Trigger((int)FaceEvent.RightEyeOpen);
+                            else
+                                faceController.Event.Trigger((int)FaceEvent.RightEyeClose);
 
-                                _isRightEyeOpen = isRightEyeOpen;
-                            }
+                            _isRightEyeOpen = isRightEyeOpen;
+                        }
 
-                            if (_isLeftEyeOpen != isLeftEyeOpen)
-                            {
-                                if (isLeftEyeOpen)
-                                    faceController.Event.Trigger((int)FaceEvent.LeftEyeOpen);
-                                else
-                                    faceController.Event.Trigger((int)FaceEvent.LeftEyeClose);
+                        if (_isLeftEyeOpen != isLeftEyeOpen)
+                        {
+                            if (isLeftEyeOpen)
+                                faceController.Event.Trigger((int)FaceEvent.LeftEyeOpen);
+                            else
+                                faceController.Event.Trigger((int)FaceEvent.LeftEyeClose);
 
-                                _isLeftEyeOpen = isLeftEyeOpen;
-                            }
+                            _isLeftEyeOpen = isLeftEyeOpen;
+                        }
 
-                            if (_isMouthOpen != isMouthOpen)
-                            {
-                                if (isMouthOpen)
-                                    faceController.Event.Trigger((int)FaceEvent.MouthOpen);
-                                else
-                                    faceController.Event.Trigger((int)FaceEvent.MouthClose);
+                        if (_isMouthOpen != isMouthOpen)
+                        {
+                            if (isMouthOpen)
+                                faceController.Event.Trigger((int)FaceEvent.MouthOpen);
+                            else
+                                faceController.Event.Trigger((int)FaceEvent.MouthClose);
 
-                                _isMouthOpen = isMouthOpen;
-                            }
+                            _isMouthOpen = isMouthOpen;
                         }
 
                         // Convert to unity pose data.
@@ -677,11 +655,15 @@ namespace DlibFaceLandmarkDetectorExample
                     {
                         ARM = ARGameObject.transform.localToWorldMatrix * ARM.inverse;
                         ARUtils.SetTransformFromMatrix(ARCamera.transform, ref ARM);
+                        //ARGameObject.transform.localScale
+                        //= new Vector3(1f / transform.localScale.x, 1f / transform.localScale.y, 1f / transform.localScale.z);
                     }
                     else
                     {
                         ARM = ARCamera.transform.localToWorldMatrix * ARM;
                         ARUtils.SetTransformFromMatrix(ARGameObject.transform, ref ARM);
+                        //ARGameObject.transform.localScale
+                        //    = new Vector3(1f / transform.localScale.x, 1f / transform.localScale.y, 1f / transform.localScale.z);
                     }
                 }
                 //Imgproc.putText (rgbaMat, "W:" + rgbaMat.width () + " H:" + rgbaMat.height () + " SO:" + Screen.orientation, new Point (5, rgbaMat.rows () - 10), Imgproc.FONT_HERSHEY_SIMPLEX, 0.5, new Scalar (255, 255, 255, 255), 1, Imgproc.LINE_AA, false);

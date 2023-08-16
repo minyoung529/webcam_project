@@ -54,7 +54,7 @@ public class FaceController : MonoBehaviour
         face_recognition_model_filepath = Utils.getFilePath(FACE_RECOGNITION_MODEL_FILENAME);
 
         Event.Trigger((int)FaceEvent.OnSetFilePath);
-        
+
         Run();
         Event.Trigger((int)FaceEvent.OnRun);
 #endif
@@ -67,7 +67,11 @@ public class FaceController : MonoBehaviour
 
     public void DetectFace()
     {
+        if (webCamTextureToMatHelper == null) return;
+
         Mat rgbaMat = webCamTextureToMatHelper.GetMat();
+
+        if (rgbaMat == null) return;
 
         if (faceDetector == null)
         {

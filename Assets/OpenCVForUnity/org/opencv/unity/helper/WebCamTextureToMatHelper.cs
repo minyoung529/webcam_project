@@ -546,6 +546,8 @@ namespace OpenCVForUnity.UnityUtils.Helper
 
                 if (onDisposed != null)
                     onDisposed.Invoke();
+
+                yield break;
             }
 
             isInitWaiting = true;
@@ -751,6 +753,8 @@ namespace OpenCVForUnity.UnityUtils.Helper
 
             if (isTimeout)
             {
+                if (hasInitDone) yield break;
+
                 webCamTexture.Stop();
                 webCamTexture = null;
                 isInitWaiting = false;
