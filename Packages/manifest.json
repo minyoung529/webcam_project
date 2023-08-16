@@ -10,9 +10,7 @@
     {
       "name": "iBicha",
       "url": "https://registry.npmjs.com",
-      "scopes": [
-        "com.ibicha"
-      ]
+      "scopes": [ "com.ibicha" ]
     }
   ],
   "dependencies": {
