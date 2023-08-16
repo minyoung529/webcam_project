@@ -9,6 +9,7 @@ public static class SheetName
 {
     public const string CHARACTERS = "Characters";
     public const string CHATTING_TEMPLATE = "ChattingTemplate";
+    public const string VIDEO_TEMPLATE = "VideoTemplate";
 
     /// <summary>
     /// 채팅 or 영상통화 시트 이름을 반환하는 함수

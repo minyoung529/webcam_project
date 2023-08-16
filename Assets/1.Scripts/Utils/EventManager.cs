@@ -135,6 +135,7 @@ public struct Param
 public enum EventName
 {
     OnCharacterLoadComplete,
-
+    OnVideoLoadComplete,
+    OnSetTextureURL,
     Count
 }
