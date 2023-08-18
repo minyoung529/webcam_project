@@ -86,6 +86,7 @@ public class FacialExpressionAnalyzer : WebcamAnalyzer
 
     public override object GetInformation()
     {
+        if (webCamTextureToMatHelper == null) return "Not Ready";
         Mat rgbaMat = webCamTextureToMatHelper.GetMat();
         if (rgbaMat == null) return "Not Ready";
 

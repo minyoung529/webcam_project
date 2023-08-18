@@ -10,24 +10,26 @@ using System.Collections.Generic;
 using UnityEngine;
 using static UnityEngine.XR.ARSubsystems.XRCpuImage;
 
-public class FaceController : MonoBehaviour
+public sealed class FaceController : MonoBehaviour
 {
     public EventController Event { get; private set; } = new();
-    protected WebCamTextureToMatHelper webCamTextureToMatHelper;
+
+    [SerializeField]
+    private WebCamTextureToMatHelper webCamTextureToMatHelper;
 
     #region Face Detection
-    protected static readonly string FACE_RECOGNITION_MODEL_FILENAME = "OpenCVForUnity/dnn/face_recognition_sface_2021dec.onnx";
-    protected static readonly string FACE_DETECTION_MODEL_FILENAME = "OpenCVForUnity/dnn/face_detection_yunet_2023mar.onnx";
+    private static readonly string FACE_RECOGNITION_MODEL_FILENAME = "OpenCVForUnity/dnn/face_recognition_sface_2021dec.onnx";
+    private static readonly string FACE_DETECTION_MODEL_FILENAME = "OpenCVForUnity/dnn/face_detection_yunet_2023mar.onnx";
 
     public string face_detection_model_filepath { get; private set; }
     public string face_recognition_model_filepath { get; private set; }
 
-    protected YuNetV2FaceDetector faceDetector;
+    private YuNetV2FaceDetector faceDetector;
     #endregion
 
-    protected Mat bgrMat;
+    private Mat bgrMat;
     public Mat BGRMat => bgrMat;
-    protected Mat faceMat;
+    private Mat faceMat;
     public Mat Face => faceMat;
 
 #if UNITY_WEBGL
@@ -44,8 +46,6 @@ public class FaceController : MonoBehaviour
 
     public void Initialize()
     {
-        webCamTextureToMatHelper = GetComponent<WebCamTextureToMatHelper>();
-
 #if UNITY_WEBGL
             getFilePath_Coroutine = GetFilePath();
             StartCoroutine(getFilePath_Coroutine);

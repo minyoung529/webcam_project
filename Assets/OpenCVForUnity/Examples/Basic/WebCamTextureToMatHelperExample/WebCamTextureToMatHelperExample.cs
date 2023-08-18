@@ -35,13 +35,14 @@ namespace OpenCVForUnityExample
         /// <summary>
         /// The webcam texture to mat helper.
         /// </summary>
+        [SerializeField]
         WebCamTextureToMatHelper webCamTextureToMatHelper;
 
         // Use this for initialization
         void Start()
         {
             // Get the WebCamTextureToMatHelper component attached to the current game object
-            webCamTextureToMatHelper = gameObject.GetComponent<WebCamTextureToMatHelper>();
+            webCamTextureToMatHelper = GetComponent<WebCamTextureToMatHelper>();
 
             // Set the requested width, height, FPS and ColorFormat
             int width, height;
@@ -60,7 +61,7 @@ namespace OpenCVForUnityExample
         /// </summary>
         public void OnWebCamTextureToMatHelperInitialized()
         {
-            Debug.Log("OnWebCamTextureToMatHelperInitialized");
+            Debug.Log(gameObject.name + "OnWebCamTextureToMatHelperInitialized");
 
             // Retrieve the current frame from the WebCamTextureToMatHelper as a Mat object
             Mat webCamTextureMat = webCamTextureToMatHelper.GetMat();

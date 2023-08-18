@@ -9,17 +9,19 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(FaceController), typeof(AnalyzerController))]
+[RequireComponent(typeof(AnalyzerController))]
 public abstract class WebcamAnalyzer : MonoBehaviour
 {
     [SerializeField]
     protected InformationType informationType;
 
+    [SerializeField]
     protected WebCamTextureToMatHelper webCamTextureToMatHelper;
 
     [SerializeField]
     protected bool runOnUpdate = false;
 
+    [SerializeField]
     protected FaceController faceController;
 
     protected static readonly string FACE_RECOGNITION_MODEL_FILENAME = "OpenCVForUnity/dnn/face_recognition_sface_2021dec.onnx";
@@ -28,9 +30,6 @@ public abstract class WebcamAnalyzer : MonoBehaviour
 
     private void Awake()
     {
-        webCamTextureToMatHelper = GetComponent<WebCamTextureToMatHelper>();
-        faceController = GetComponent<FaceController>();
-
         faceController.Event.StartListening((int)FaceEvent.OnRun, Run);
         faceController.Event.StartListening((int)FaceEvent.OnSetFilePath, FilePathSetting);
     }

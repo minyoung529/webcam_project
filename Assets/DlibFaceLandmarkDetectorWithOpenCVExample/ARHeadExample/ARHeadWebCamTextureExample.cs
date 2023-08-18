@@ -158,6 +158,7 @@ namespace DlibFaceLandmarkDetectorExample
         /// <summary>
         /// The webcam texture to mat helper.
         /// </summary>
+        [SerializeField]
         WebCamTextureToMatHelper webCamTextureToMatHelper;
 
         /// <summary>
@@ -188,12 +189,8 @@ namespace DlibFaceLandmarkDetectorExample
         private bool _isLeftEyeOpen = false;
         private bool _isMouthOpen = false;
 
+        [SerializeField]
         private FaceController faceController;
-
-        private void Awake()
-        {
-            faceController = gameObject.GetComponent<FaceController>();
-        }
 
         // Use this for initialization
         void Start()
@@ -263,8 +260,6 @@ namespace DlibFaceLandmarkDetectorExample
             imagePoints = new MatOfPoint2f();
 
             faceLandmarkDetector = new FaceLandmarkDetector(dlibShapePredictorFilePath);
-
-            webCamTextureToMatHelper.Initialize();
         }
 
         /// <summary>
