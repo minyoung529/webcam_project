@@ -146,7 +146,7 @@ public class ChatManager : MonoBehaviour
             StartCoroutine(ScrollDelay(scrollbar));
     }
     protected void Fit(RectTransform rect) => LayoutRebuilder.ForceRebuildLayoutImmediate(rect);
-    private IEnumerator ScrollDelay(Scrollbar scrollbar)
+    protected IEnumerator ScrollDelay(Scrollbar scrollbar)
     {
         yield return new WaitForSeconds(0.03f);
         scrollbar.value = 0;

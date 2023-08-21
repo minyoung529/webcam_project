@@ -24,7 +24,7 @@ public class SelectionUI : MonoBehaviour
         Transform[] children = content.GetComponentsInChildren<Transform>();
         if (children != null)
         {
-            for (int i = 1; i < children.Length; i++)
+            for (int i = 2; i < children.Length; i++)
             {
                 if (children[i] == content) continue;
                 selectionList.Remove(children[i].GetComponent<SelectionPanel>());
@@ -69,5 +69,9 @@ public class SelectionUI : MonoBehaviour
             x.SetSelection(string.Empty);
             return true; 
         });
+    }
+    public float GetContentLength()
+    {
+        return content.GetComponent<RectTransform>().rect.height;
     }
 }
