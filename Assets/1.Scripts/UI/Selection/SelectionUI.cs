@@ -10,12 +10,13 @@ public class SelectionUI : MonoBehaviour
     [SerializeField]
     private SelectionPanel selectionPrefab;
     private List<SelectionPanel> selectionList = new();
-
+    private PlayerInputBar playerInputBar;
     public int selectionIndex { get; private set; }
 
     private void Start()
     {
         InitSelection();
+        playerInputBar = FindObjectOfType<PlayerInputBar>();
     }
 
     private void InitSelection()
@@ -48,6 +49,8 @@ public class SelectionUI : MonoBehaviour
     private void SetSelectionIndex(SelectionPanel panel)
     {
         selectionIndex = panel.Index;
+        playerInputBar.Expand();
+        playerInputBar.DeactivateSelection();
     }
     public void SetSelection(List<string> selection)
     {
@@ -60,6 +63,7 @@ public class SelectionUI : MonoBehaviour
             selectionList[i].SetSelection(selection[i]);
             selectionList[i].gameObject.SetActive(true);
         }
+        playerInputBar.ActivateSelection();
     }
     public void ResetSelection()
     {

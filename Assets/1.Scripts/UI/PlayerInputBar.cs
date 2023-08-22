@@ -1,3 +1,4 @@
+using DG.Tweening;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -20,9 +21,9 @@ public class PlayerInputBar : MonoBehaviour
         chatUIManager = FindObjectOfType<TestChatUIManager>();
         selectionUI = GetComponent<SelectionUI>();
         selectionRect = GetComponent<ChangeableRect>();
-        ActivateSelection();
+        DeactivateSelection();
     }
-    private void Expand()
+    public void Expand()
     {
         if (isExpand)
         {
@@ -35,7 +36,6 @@ public class PlayerInputBar : MonoBehaviour
         else
         {
             print($"expand!{selectionUI.GetContentLength()}");
-            //selectionPanel.ChangeRectLength(selectionUI.GetContentLength());
             selectionRect.ChangeRectY(selectionUI.GetContentLength());
             if (chatUIManager.GetContentLength() > chatPanelRect.GetRectLength() - selectionUI.GetContentLength())
                 chatPanelRect.ChangeRectY(selectionUI.GetContentLength());
@@ -45,12 +45,12 @@ public class PlayerInputBar : MonoBehaviour
     }
     public void ActivateSelection()
     {
-        expandButton.GetComponent<Image>().color = Color.white;
+        expandButton.GetComponent<Image>().DOColor(Color.white,0.5f);
         expandButton.onClick.AddListener(Expand);
     }
     public void DeactivateSelection()
     {
-        expandButton.GetComponent<Image>().color = Color.gray;
+        expandButton.GetComponent<Image>().DOColor(Color.gray,0.5f);
         expandButton.onClick.RemoveListener(Expand);
     }
 }
