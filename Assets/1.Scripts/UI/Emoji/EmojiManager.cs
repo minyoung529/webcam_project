@@ -35,16 +35,16 @@ public class EmojiManager : MonoBehaviour
         }
     }
 
-    public Sprite GetEmojiSprite(string name)
+    public Sprite GetEmojiSprite(ReactionType name)
     {
-        return emojiSprite[name];
+        return emojiSprite[Enum.GetName(typeof(ReactionType), name)];
     }
     public void AddEmoji(EmojiList emojiList, ReactionType type)
     {
-
+        emojiList.AddEmoji(type, GetEmojiSprite(type));
     }
     public void AddEmoji(EmojiList emojiList, ReactionType type, int num)
     {
-
+        emojiList.AddEmoji(type, num, GetEmojiSprite(type));
     }
 }

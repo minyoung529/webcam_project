@@ -84,13 +84,12 @@ public class TestDataLoadWithUI : MonoBehaviour
                     case ChattingType.Chat:
                     case ChattingType.CalculateSelect:
                         ShowTypingBubble(isSend, characterName, sheet[i].sender, sheet[i].inputTime);
-
                         chatUIManager.TestChat(isSend, sheet[i].GetText(), characterName, characterSpriteDictionary[sheet[i].sender], sheet[i].reactionType, ChatType.Default);
                         break;
                     case ChattingType.Select:
                         ShowTypingBubble(isSend, characterName, sheet[i].sender, sheet[i].inputTime);
                         selectionUI.SetSelection(sheet[i].GetAllSelecteText());
-                        yield return new WaitUntil(()=>selectionUI.selectionIndex != -1);
+                        yield return new WaitUntil(() => selectionUI.selectionIndex != -1);
                         sheet[i].selectedIndx = selectionUI.selectionIndex;
                         selectionUI.ResetSelection();
                         chatUIManager.TestChat(isSend, sheet[i].GetText(), characterName, characterSpriteDictionary[sheet[i].sender], sheet[i].reactionType, ChatType.Default);

@@ -12,19 +12,46 @@ public class Emoji : MonoBehaviour
     [SerializeField]
     private TMP_Text emojiText;
 
+    public bool isRemoved { get; private set; }
     public ReactionType reactionType { get; private set; }
 
     //함수마다 숫자 올라가는 애니메이션 다르게 추가할 것
-    public void SetEmoji(ReactionType type, Sprite emojiSprite, int emojiNum)
+    public void AddEmoji(ReactionType type, Sprite emojiSprite, int emojiNum)
     {
+        if(isRemoved)
+        {
+            gameObject.SetActive(true);
+            isRemoved = false;
+        }
         reactionType = type;
         emojiText.text = (int.Parse(emojiText.text) + emojiNum).ToString();
         emojiIcon.sprite = emojiSprite;
     }
-    public void SetEmoji(ReactionType type, int emojiNum)
+    public void AddEmoji(ReactionType type, int emojiNum)
     {
+        if (isRemoved)
+        {
+            gameObject.SetActive(true);
+            isRemoved = false;
+        }
         reactionType = type;
         emojiText.text = (int.Parse(emojiText.text) + emojiNum).ToString();
+    }
+    public void SetEmoji(ReactionType type, int emojiNum)
+    {
+        if (isRemoved)
+        {
+            gameObject.SetActive(true);
+            isRemoved = false;
+        }
+        reactionType = type;
+        emojiText.text = (emojiNum).ToString();
+    }
+    public void RemoveEmoji()
+    {
+        emojiText.text = "0";
+        gameObject.SetActive(false);
+        isRemoved = true;
     }
 }
 

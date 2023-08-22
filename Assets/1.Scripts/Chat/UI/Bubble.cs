@@ -16,7 +16,7 @@ public class Bubble : MonoBehaviour
     private GameObject trail;
     //유저 반응
     [SerializeField]
-    private GameObject emojis;
+    private EmojiList emojis;
 
     //유저 프로필 (상대 말풍선만 해당)
     [Space(10)]
@@ -38,7 +38,7 @@ public class Bubble : MonoBehaviour
     public RectTransform TextRect => textRect;
 
     public GameObject Trail => trail;
-    public GameObject Emojis => emojis;
+    public EmojiList Emojis => emojis;
     public Image UserImage => userImage;
     public GameObject UserImageObj => userImageObj;
 

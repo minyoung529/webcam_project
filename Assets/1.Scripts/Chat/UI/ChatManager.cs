@@ -20,7 +20,7 @@ public class ChatManager : MonoBehaviour
     protected Bubble LastArea;
     protected Bubble otherTyping, mineTyping;
     protected bool isother = false;
-
+    protected EmojiManager emojiManager;
     protected void SetupTypingBubble(RectTransform contentRect)
     {
         otherTyping = CreateArea(contentRect, otherTypingPrefab);
@@ -94,29 +94,13 @@ public class ChatManager : MonoBehaviour
 
         if (picture != null && bubble.UserImage != null)
             bubble.UserImage.sprite = picture;
-
-        switch (reactionType)
+        if(reactionType == ReactionType.None)
         {
-            case ReactionType.None:
-                bubble.Emojis.SetActive(false);
-                break;
-            case ReactionType.Heart:        //추후 추가 하는걸로.. 지금은 껐다키기
-                bubble.Emojis.SetActive(true);
-                break;
-            case ReactionType.Good:
-                break;
-            case ReactionType.Check:
-                break;
-            case ReactionType.Sad:
-                break;
-            case ReactionType.Fun:
-                break;
-            case ReactionType.AI:
-                break;
-            case ReactionType.Count:
-                break;
-            default:
-                break;
+            bubble.Emojis.RemoveEmoji(reactionType);
+        }
+        else
+        {
+            emojiManager.AddEmoji(bubble.Emojis, reactionType);
         }
         switch (chatType)
         {

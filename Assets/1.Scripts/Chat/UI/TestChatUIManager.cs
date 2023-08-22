@@ -18,6 +18,7 @@ public class TestChatUIManager : ChatManager
     private void Start()
     {
         SetupTypingBubble(contentRect);
+        emojiManager = FindObjectOfType<EmojiManager>();
     }
     public void TestChatClear()
     {
