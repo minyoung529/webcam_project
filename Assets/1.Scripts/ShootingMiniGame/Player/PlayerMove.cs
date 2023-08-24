@@ -10,6 +10,10 @@ public class PlayerMove : MonoBehaviour
     private float moveSpeed = 50f;
     [SerializeField]
     private float xRange = 2.5f;
+    [SerializeField]
+    [Range(0f, 0.2f)]
+    private float idleRange = 0.1f;
+
     private Rigidbody rigid;
     private SphereCollider sphereCollider;
     private Animator animator;
@@ -43,7 +47,7 @@ public class PlayerMove : MonoBehaviour
         Vector3 movement = new Vector3(horizontalInput, 0f, 0f) * moveSpeed * Time.deltaTime;
         rigid.MovePosition(transform.position + movement);
         animator.SetFloat(horizontal, horizontalInput);
-        if (horizontalInput > -0.1f && horizontalInput < 0.1f)
+        if (horizontalInput > idleRange * -1 && horizontalInput < idleRange)
         {
             animator.SetBool(isMove, false);
         }
