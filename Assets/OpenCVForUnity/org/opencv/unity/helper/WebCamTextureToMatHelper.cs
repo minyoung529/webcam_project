@@ -546,6 +546,8 @@ namespace OpenCVForUnity.UnityUtils.Helper
 
                 if (onDisposed != null)
                     onDisposed.Invoke();
+
+                yield break;
             }
 
             isInitWaiting = true;
@@ -751,6 +753,8 @@ namespace OpenCVForUnity.UnityUtils.Helper
 
             if (isTimeout)
             {
+                if (hasInitDone) yield break;
+
                 webCamTexture.Stop();
                 webCamTexture = null;
                 isInitWaiting = false;
@@ -933,6 +937,13 @@ namespace OpenCVForUnity.UnityUtils.Helper
         {
             return hasInitDone ? webCamTexture : null;
         }
+
+        public virtual Texture2D GetWebcamTexture2D()
+        {
+            Mat webCamTextureMat = GetMat();
+            return new Texture2D(webCamTextureMat.cols(), webCamTextureMat.rows(), TextureFormat.RGBA32, false);
+        }
+
 
         /// <summary>
         /// Returns the active WebcamDevice.

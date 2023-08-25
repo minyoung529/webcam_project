@@ -35,6 +35,7 @@
     "com.unity.multiplayer-hlapi": "1.0.4",
     "com.unity.postprocessing": "3.2.2",
     "com.unity.purchasing": "4.9.3",
+    "com.unity.render-pipelines.universal": "12.1.8",
     "com.unity.test-framework": "1.1.31",
     "com.unity.textmeshpro": "3.0.6",
     "com.unity.timeline": "1.6.4",
