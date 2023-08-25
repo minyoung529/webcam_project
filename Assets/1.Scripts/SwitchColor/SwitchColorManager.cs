@@ -6,17 +6,19 @@ using UnityEngine;
 
 public class SwitchColorManager : MonoBehaviour
 {
-    [SerializeField] float initfloorSpeed = 10f;
 
     [Header("Prefab")]
     [SerializeField] GameObject player;
+
+    [SerializeField] float floorSpeed = 10f;
     [SerializeField] FloorBlock[] floors;
 
-    [Header("Position")]
-    [SerializeField] Transform playerStartPos;
 
     [Header("Score UI")]
     [SerializeField] TextMeshProUGUI scoreText;
+    
+    private Transform playerStartPos;
+    
     private int score = 0;
     private int level = 1;
 
@@ -24,6 +26,8 @@ public class SwitchColorManager : MonoBehaviour
 
     private void Start()
     {
+        playerStartPos = player.transform;
+
         Init();
         StartGame();
     }
@@ -39,7 +43,7 @@ public class SwitchColorManager : MonoBehaviour
     {
         for (int i = 0; i < floors.Length; i++)
         {
-            floors[i].SetSpeed(initfloorSpeed);
+            floors[i].SetSpeed(floorSpeed);
         }
 
         player.transform.position = playerStartPos.position;
@@ -66,7 +70,7 @@ public class SwitchColorManager : MonoBehaviour
         level += 1;
         for(int i=0;i<floors.Length;i++)
         {
-            floors[i].SetSpeed(initfloorSpeed * level);
+            floors[i].SetSpeed(floorSpeed * level);
         }
     }
 
