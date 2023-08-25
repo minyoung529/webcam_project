@@ -31,7 +31,7 @@ public partial class ChattingData
                 return CalculateSelectedText();
 
             case ChattingType.Select:
-                ChattingData.Set(ChattingDataType.PrevResponse, selectedIndx);
+                ChattingData.Set(InformationType.PrevResponse, selectedIndx);
                 return GetSelectedText(selectedIndx);
 
             default:
