@@ -7,8 +7,6 @@ using UnityEngine.UI;
 public class TestChatUIManager : ChatManager
 {
     [SerializeField]
-    private TMP_InputField textField;
-    [SerializeField]
     private RectTransform contentRect;
     [SerializeField]
     private Scrollbar scrollbar;
@@ -20,6 +18,7 @@ public class TestChatUIManager : ChatManager
     private void Start()
     {
         SetupTypingBubble(contentRect);
+        emojiManager = FindObjectOfType<EmojiManager>();
     }
     public void TestChatClear()
     {
@@ -37,8 +36,16 @@ public class TestChatUIManager : ChatManager
     {
         RemoveTyping(isSend);
     }
-    public void TestChat(bool isSend, string text, string user, ReactionType emojiType = ReactionType.None, ChatType chatType = ChatType.Default)
+    public void TestChat(bool isSend, string text, string user, Sprite picture = null,ReactionType emojiType = ReactionType.None, ChatType chatType = ChatType.Default)
     {
-        Chat(contentRect, scrollbar, isSend, text, user, emojiType, null, chatType);
+        Chat(contentRect, scrollbar, isSend, text, user, emojiType, picture, chatType);
+    }
+    public void ScrollDelay()
+    {
+        StartCoroutine(ScrollDelay(scrollbar));
+    }
+    public float GetContentLength()
+    {
+        return contentRect.rect.height;
     }
 }

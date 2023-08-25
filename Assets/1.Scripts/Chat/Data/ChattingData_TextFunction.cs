@@ -4,6 +4,13 @@ using UnityEngine;
 
 public partial class ChattingData
 {
+    public List<string> GetAllSelecteText()
+    {
+        List<string> result = new List<string>();
+        string[] selecteText = text.Split('$');
+        result.AddRange(selecteText);
+        return result;
+    }
     public string GetSelectedText(int idx)
     {
         string[] texts = text.Split('$');

@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class Bubble : MonoBehaviour
 {
-    //말풍선, 유저 채팅 rect
+    //말풍선, 유저 채팅 rect, 프로필 rect
     [SerializeField]
     private RectTransform bubbleRect, boxRect, textRect;
 
@@ -16,13 +16,14 @@ public class Bubble : MonoBehaviour
     private GameObject trail;
     //유저 반응
     [SerializeField]
-    private GameObject emojis;
+    private EmojiList emojis;
 
     //유저 프로필 (상대 말풍선만 해당)
     [Space(10)]
     [SerializeField]
     private Image userImage;
-
+    [SerializeField]
+    private GameObject userImageObj;
     //유저 이름 text (상대 말풍선만 해당)
     [Space(10)]
     [SerializeField]
@@ -37,8 +38,9 @@ public class Bubble : MonoBehaviour
     public RectTransform TextRect => textRect;
 
     public GameObject Trail => trail;
-    public GameObject Emojis => emojis;
+    public EmojiList Emojis => emojis;
     public Image UserImage => userImage;
+    public GameObject UserImageObj => userImageObj;
 
     public TMP_Text UserNameText => userNameText;
     public string UserName { get { return userName; } set { userName = value; } }

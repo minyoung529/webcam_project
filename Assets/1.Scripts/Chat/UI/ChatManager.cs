@@ -20,7 +20,7 @@ public class ChatManager : MonoBehaviour
     protected Bubble LastArea;
     protected Bubble otherTyping, mineTyping;
     protected bool isother = false;
-
+    protected EmojiManager emojiManager;
     protected void SetupTypingBubble(RectTransform contentRect)
     {
         otherTyping = CreateArea(contentRect, otherTypingPrefab);
@@ -62,15 +62,16 @@ public class ChatManager : MonoBehaviour
         else
             bubble = otherTyping;
 
-        bubble.gameObject.SetActive(true);
-        bubble.transform.SetAsLastSibling();
-
-        LastArea = bubble;
+        if (picture != null && bubble.UserImage != null)
+            bubble.UserImage.sprite = picture;
         if (!isSend)
         {
             bubble.UserName = user;
             bubble.UserNameText.text = bubble.UserName;
         }
+
+        bubble.gameObject.SetActive(true);
+        bubble.transform.SetAsLastSibling();
 
         StartCoroutine(ScrollDelay(scrollbar));
     }
@@ -93,29 +94,13 @@ public class ChatManager : MonoBehaviour
 
         if (picture != null && bubble.UserImage != null)
             bubble.UserImage.sprite = picture;
-
-        switch (reactionType)
+        if(reactionType == ReactionType.None)
         {
-            case ReactionType.None:
-                bubble.Emojis.SetActive(false);
-                break;
-            case ReactionType.Heart:        //추후 추가 하는걸로.. 지금은 껐다키기
-                bubble.Emojis.SetActive(true);
-                break;
-            case ReactionType.Good:
-                break;
-            case ReactionType.Check:
-                break;
-            case ReactionType.Sad:
-                break;
-            case ReactionType.Fun:
-                break;
-            case ReactionType.AI:
-                break;
-            case ReactionType.Count:
-                break;
-            default:
-                break;
+            bubble.Emojis.RemoveEmoji(reactionType);
+        }
+        else
+        {
+            emojiManager.AddEmoji(bubble.Emojis, reactionType);
         }
         switch (chatType)
         {
@@ -145,7 +130,7 @@ public class ChatManager : MonoBehaviour
             StartCoroutine(ScrollDelay(scrollbar));
     }
     protected void Fit(RectTransform rect) => LayoutRebuilder.ForceRebuildLayoutImmediate(rect);
-    private IEnumerator ScrollDelay(Scrollbar scrollbar)
+    protected IEnumerator ScrollDelay(Scrollbar scrollbar)
     {
         yield return new WaitForSeconds(0.03f);
         scrollbar.value = 0;
@@ -173,7 +158,7 @@ public class ChatManager : MonoBehaviour
         //타인이 같은 시간에 보냈으면 프사, 이름 없애기
         if (!isSend)
         {
-            bubble.UserImage.gameObject.SetActive(!isSameUser);
+            bubble.UserImageObj.SetActive(!isSameUser);
             bubble.UserNameText.gameObject.SetActive(!isSameUser);
             bubble.UserNameText.text = bubble.UserName;
         }
@@ -184,7 +169,6 @@ public class ChatManager : MonoBehaviour
     /// </summary>
     private void FitTextHeight(Bubble bubble)
     {
-
         float X = bubble.TextRect.sizeDelta.x + 42;
         float Y = bubble.TextRect.sizeDelta.y;
         if (Y > 60) //위 아래 여백이 원래 여백 초과 == 두 줄 이상
