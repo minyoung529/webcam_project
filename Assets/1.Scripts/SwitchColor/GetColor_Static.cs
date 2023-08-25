@@ -27,9 +27,9 @@ public static class GetColor
         return (ColorEnum)randomColorIndex;
     }
 
-    public static bool IsSameColor(ColorEnum colorType, ColorPlayer player)
+    public static bool IsSameColor(ColorEnum colorType, FloorBlock floor)
     {
-        return colorType == player.ColorType;
+        return colorType == floor.ColorType;
     }
 
 }

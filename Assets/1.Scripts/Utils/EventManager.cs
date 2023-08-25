@@ -137,5 +137,7 @@ public enum EventName
     OnCharacterLoadComplete,
     OnVideoLoadComplete,
     OnSetTextureURL,
+    OnSwitchColorFail,
+
     Count
 }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -13,14 +14,14 @@ public class ColorPlayer : MonoBehaviour
 
     #region Variable
 
-    private SpriteRenderer renderer = null;
+    private MeshRenderer renderer = null;
     private ColorEnum colorType = ColorEnum.Red;
 
     #endregion
 
     private void Awake()
     {
-        renderer = GetComponent<SpriteRenderer>();
+        renderer = GetComponentInChildren<MeshRenderer>();
     }
 
     private void Start()
@@ -47,8 +48,8 @@ public class ColorPlayer : MonoBehaviour
 
     private void Move()
     {
-        if (Input.GetKey(KeyCode.A)) transform.Translate(Vector3.left * speed * Time.deltaTime);
-        else if (Input.GetKey(KeyCode.D))  transform.Translate(Vector3.right * speed * Time.deltaTime);
+        if (Input.GetKey(KeyCode.A)) transform.Translate(Vector3.forward * speed * Time.deltaTime);
+        else if (Input.GetKey(KeyCode.D))  transform.Translate(Vector3.back * speed * Time.deltaTime);
 
         Wall();
     }
@@ -67,7 +68,7 @@ public class ColorPlayer : MonoBehaviour
     private void SetColor(ColorEnum nextColor)
     {
         colorType = nextColor;
-        renderer.color = GetColor.GetColorEnumToColor(colorType);
+        renderer.material.color = GetColor.GetColorEnumToColor(colorType);
     }
 
     private void SetNextColor()
@@ -79,6 +80,49 @@ public class ColorPlayer : MonoBehaviour
         }
 
         SetColor((ColorEnum)index);
+    }
+
+    #endregion
+
+    #region Trigger()
+
+    /// <summary>
+    /// 플레이어와 다른 색깔인데 충돌했을 때 실행되는 함수
+    /// </summary>
+    /// <param name="player"></param>
+    private void Different(FloorBlock floor)
+    {
+        EventManager<Action>.TriggerEvent(EventName.OnSwitchColorFail, null);
+    }
+
+    /// <summary>
+    /// 플레이어와 같은 색깔인데 충돌했을 때 실행되는 함수
+    /// </summary>
+    /// <param name="player"></param>
+    private void Same(FloorBlock floor)
+    {
+    }
+
+    /// <summary>
+    /// 플레이어와 충돌 시
+    /// </summary>
+    /// <param name="player"></param>
+    private void TriggerPlayer(FloorBlock floor)
+    {
+        if (GetColor.IsSameColor(colorType, floor))
+        {
+            Same(floor);
+        }
+        else
+        {
+            Different(floor);
+        }
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        FloorBlock floor = collision.collider.GetComponent<FloorBlock>();
+        TriggerPlayer(floor);
     }
 
     #endregion

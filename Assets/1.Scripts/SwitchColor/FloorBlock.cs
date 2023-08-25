@@ -7,92 +7,74 @@ public class FloorBlock : MonoBehaviour
 {
     #region Get
 
-    [SerializeField] private float speed = 10f;
-    public SpriteRenderer Renderer { get { return renderer; } }
+    public MeshRenderer Renderer { get { return renderer; } }
     public ColorEnum ColorType { get { return colorType; } }
+    public bool CanMove => canMove;
 
     #endregion
 
     #region Variable
+    
+    private float speed = 10f;
 
-    private SpriteRenderer renderer = null;
+    private MeshRenderer renderer = null;
 
     private ColorEnum colorType = ColorEnum.Count;
+
+    private Vector3 startPos = new Vector3(0f, -10f, -45f);
+
+    private bool canMove = true;
 
     #endregion
 
     private void Awake()
     {
-        renderer ??= GetComponentInChildren<SpriteRenderer>();
-    }
+        renderer ??= GetComponentInChildren<MeshRenderer>();
 
-    private void Start()
-    {
         Init();
     }
 
-    protected virtual void Init()
+    private void Init()
     {
-        colorType = GetColor.GetRandomColorEnum();
+        RandomNextColor();
     }
 
     private void Update()
     {
-        Move();
+        if (CanMove) Move();
     }
 
     #region Move
 
+    public void SetSpeed(float value)
+    {
+        speed = value;  
+    }
     private void Move()
     {
-        transform.Translate(Vector2.left * speed * Time.deltaTime);
-    }
-
-    #endregion
-
-    #region Trigger()
-
-    /// <summary>
-    /// 플레이어와 다른 색깔인데 충돌했을 때 실행되는 함수
-    /// </summary>
-    /// <param name="player"></param>
-    protected virtual void Different(ColorPlayer player)
-    {
-
-    }
-    /// <summary>
-    /// 플레이어와 같은 색깔인데 충돌했을 때 실행되는 함수
-    /// </summary>
-    /// <param name="player"></param>
-    protected virtual void Same(ColorPlayer player)
-    {
-
-    }
-
-    /// <summary>
-    /// 플레이어와 충돌 시
-    /// </summary>
-    /// <param name="player"></param>
-    private void TriggerPlayer(ColorPlayer player)
-    {
-        if (GetColor.IsSameColor(colorType, player))
+        transform.Translate(Vector3.forward * speed * Time.deltaTime);
+        if (transform.position.z >= 55f)
         {
-            Same(player);
-        }
-        else
-        {
-            Different(player);
-        }
-    }
-
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        if(collision.collider.CompareTag("Player"))
-        {
-            ColorPlayer player = collision.collider.GetComponent<ColorPlayer>();
-            TriggerPlayer(player);
+            transform.position = startPos;
         }
     }
 
     #endregion
+
+    #region Color
+
+    private void RandomNextColor()
+    {
+        SetColor(GetColor.GetRandomColorEnum());
+    }
+
+    private void SetColor(ColorEnum color)
+    {
+        colorType = color;
+        renderer.material.color = GetColor.GetColorEnumToColor(colorType);
+    }
+
+
+    #endregion
+
 }
