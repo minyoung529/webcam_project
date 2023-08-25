@@ -18,39 +18,14 @@ namespace OpenCVForUnityExample
     public class WebCamTextureToMatHelperExample : MonoBehaviour
     {
         /// <summary>
-        /// The requested resolution dropdown.
-        /// </summary>
-        public Dropdown requestedResolutionDropdown;
-
-        /// <summary>
         /// The requested resolution.
         /// </summary>
         public ResolutionPreset requestedResolution = ResolutionPreset._640x480;
 
         /// <summary>
-        /// The requestedFPS dropdown.
-        /// </summary>
-        public Dropdown requestedFPSDropdown;
-
-        /// <summary>
         /// The requestedFPS.
         /// </summary>
         public FPSPreset requestedFPS = FPSPreset._30;
-
-        /// <summary>
-        /// The rotate 90 degree toggle.
-        /// </summary>
-        public Toggle rotate90DegreeToggle;
-
-        /// <summary>
-        /// The flip vertical toggle.
-        /// </summary>
-        public Toggle flipVerticalToggle;
-
-        /// <summary>
-        /// The flip horizontal toggle.
-        /// </summary>
-        public Toggle flipHorizontalToggle;
 
         /// <summary>
         /// The texture.
@@ -60,20 +35,14 @@ namespace OpenCVForUnityExample
         /// <summary>
         /// The webcam texture to mat helper.
         /// </summary>
+        [SerializeField]
         WebCamTextureToMatHelper webCamTextureToMatHelper;
-
-        /// <summary>
-        /// The FPS monitor.
-        /// </summary>
-        FpsMonitor fpsMonitor;
 
         // Use this for initialization
         void Start()
         {
-            fpsMonitor = GetComponent<FpsMonitor>();
-
             // Get the WebCamTextureToMatHelper component attached to the current game object
-            webCamTextureToMatHelper = gameObject.GetComponent<WebCamTextureToMatHelper>();
+            webCamTextureToMatHelper = GetComponent<WebCamTextureToMatHelper>();
 
             // Set the requested width, height, FPS and ColorFormat
             int width, height;
@@ -85,15 +54,6 @@ namespace OpenCVForUnityExample
 
             // Initialize the webcam texture to Mat helper, which starts the webcam and prepares the conversion
             webCamTextureToMatHelper.Initialize();
-
-            // Update GUI state
-            requestedResolutionDropdown.value = (int)requestedResolution;
-            string[] enumNames = System.Enum.GetNames(typeof(FPSPreset));
-            int index = Array.IndexOf(enumNames, requestedFPS.ToString());
-            requestedFPSDropdown.value = index;
-            rotate90DegreeToggle.isOn = webCamTextureToMatHelper.rotate90Degree;
-            flipVerticalToggle.isOn = webCamTextureToMatHelper.flipVertical;
-            flipHorizontalToggle.isOn = webCamTextureToMatHelper.flipHorizontal;
         }
 
         /// <summary>
@@ -101,7 +61,7 @@ namespace OpenCVForUnityExample
         /// </summary>
         public void OnWebCamTextureToMatHelperInitialized()
         {
-            Debug.Log("OnWebCamTextureToMatHelperInitialized");
+            Debug.Log(gameObject.name + "OnWebCamTextureToMatHelperInitialized");
 
             // Retrieve the current frame from the WebCamTextureToMatHelper as a Mat object
             Mat webCamTextureMat = webCamTextureToMatHelper.GetMat();
@@ -113,28 +73,34 @@ namespace OpenCVForUnityExample
             Utils.matToTexture2D(webCamTextureMat, texture);
 
             // Set the Texture2D as the main texture of the Renderer component attached to the game object
-            gameObject.GetComponent<Renderer>().material.mainTexture = texture;
+            Renderer renderer = gameObject.GetComponent<Renderer>();
 
-            // Adjust the scale of the game object to match the dimensions of the texture
-            gameObject.transform.localScale = new Vector3(webCamTextureMat.cols(), webCamTextureMat.rows(), 1);
-            Debug.Log("Screen.width " + Screen.width + " Screen.height " + Screen.height + " Screen.orientation " + Screen.orientation);
-
-
-            if (fpsMonitor != null)
+            if (renderer)
             {
-                fpsMonitor.Add("deviceName", webCamTextureToMatHelper.GetDeviceName().ToString());
-                fpsMonitor.Add("width", webCamTextureToMatHelper.GetWidth().ToString());
-                fpsMonitor.Add("height", webCamTextureToMatHelper.GetHeight().ToString());
-                fpsMonitor.Add("videoRotationAngle", webCamTextureToMatHelper.GetWebCamTexture().videoRotationAngle.ToString());
-                fpsMonitor.Add("videoVerticallyMirrored", webCamTextureToMatHelper.GetWebCamTexture().videoVerticallyMirrored.ToString());
-                fpsMonitor.Add("camera fps", webCamTextureToMatHelper.GetFPS().ToString());
-                fpsMonitor.Add("isFrontFacing", webCamTextureToMatHelper.IsFrontFacing().ToString());
-                fpsMonitor.Add("rotate90Degree", webCamTextureToMatHelper.rotate90Degree.ToString());
-                fpsMonitor.Add("flipVertical", webCamTextureToMatHelper.flipVertical.ToString());
-                fpsMonitor.Add("flipHorizontal", webCamTextureToMatHelper.flipHorizontal.ToString());
-                fpsMonitor.Add("orientation", Screen.orientation.ToString());
+                renderer.material.mainTexture = texture;
+            }
+            else
+            {
+                Image image = GetComponent<Image>();
+                RawImage rawImage = GetComponent<RawImage>();
+
+                if(image)
+                {
+                    image.material.mainTexture = texture;
+                }
+                else if(rawImage)
+                {
+                    rawImage.material.mainTexture = texture;
+                }
+                else
+                {
+                    Debug.LogError("WEBCAM ERROR OCCURRED: Renderer is Null!");
+                }
             }
 
+            // Adjust the scale of the game object to match the dimensions of the texture
+            //gameObject.transform.localScale = new Vector3(webCamTextureMat.cols(), webCamTextureMat.rows(), 1);
+            //Debug.Log("Screen.width " + Screen.width + " Screen.height " + Screen.height + " Screen.orientation " + Screen.orientation);
 
             // Get the width and height of the webCamTextureMat
             float width = webCamTextureMat.width();
@@ -179,11 +145,6 @@ namespace OpenCVForUnityExample
         public void OnWebCamTextureToMatHelperErrorOccurred(WebCamTextureToMatHelper.ErrorCode errorCode)
         {
             Debug.Log("OnWebCamTextureToMatHelperErrorOccurred " + errorCode);
-
-            if (fpsMonitor != null)
-            {
-                fpsMonitor.consoleText = "ErrorCode: " + errorCode;
-            }
         }
 
         // Update is called once per frame
@@ -254,9 +215,9 @@ namespace OpenCVForUnityExample
         }
 
         /// <summary>
-        /// Raises the requested resolution dropdown value changed event.
+        /// Raises the requested resolution value changed event.
         /// </summary>
-        public void OnRequestedResolutionDropdownValueChanged(int result)
+        public void OnRequestedResolutionValueChanged(int result)
         {
             if ((int)requestedResolution != result)
             {
@@ -270,9 +231,9 @@ namespace OpenCVForUnityExample
         }
 
         /// <summary>
-        /// Raises the requestedFPS dropdown value changed event.
+        /// Raises the requestedFPS value changed event.
         /// </summary>
-        public void OnRequestedFPSDropdownValueChanged(int result)
+        public void OnRequestedFPSValueChanged(int result)
         {
             string[] enumNames = Enum.GetNames(typeof(FPSPreset));
             int value = (int)System.Enum.Parse(typeof(FPSPreset), enumNames[result], true);
@@ -288,43 +249,25 @@ namespace OpenCVForUnityExample
         /// <summary>
         /// Raises the rotate 90 degree toggle value changed event.
         /// </summary>
-        public void OnRotate90DegreeToggleValueChanged()
+        public void SetRotate90DegreeToggleValueChanged(bool isRotate)
         {
-            if (rotate90DegreeToggle.isOn != webCamTextureToMatHelper.rotate90Degree)
-            {
-                webCamTextureToMatHelper.rotate90Degree = rotate90DegreeToggle.isOn;
-
-                if (fpsMonitor != null)
-                    fpsMonitor.Add("rotate90Degree", webCamTextureToMatHelper.rotate90Degree.ToString());
-            }
+            webCamTextureToMatHelper.rotate90Degree = isRotate;
         }
 
         /// <summary>
         /// Raises the flip vertical toggle value changed event.
         /// </summary>
-        public void OnFlipVerticalToggleValueChanged()
+        public void SetFlipVerticalToggleValueChanged(bool isFlipped)
         {
-            if (flipVerticalToggle.isOn != webCamTextureToMatHelper.flipVertical)
-            {
-                webCamTextureToMatHelper.flipVertical = flipVerticalToggle.isOn;
-
-                if (fpsMonitor != null)
-                    fpsMonitor.Add("flipVertical", webCamTextureToMatHelper.flipVertical.ToString());
-            }
+            webCamTextureToMatHelper.flipVertical = isFlipped;
         }
 
         /// <summary>
         /// Raises the flip horizontal toggle value changed event.
         /// </summary>
-        public void OnFlipHorizontalToggleValueChanged()
+        public void OnFlipHorizontalToggleValueChanged(bool isFlipped)
         {
-            if (flipHorizontalToggle.isOn != webCamTextureToMatHelper.flipHorizontal)
-            {
-                webCamTextureToMatHelper.flipHorizontal = flipHorizontalToggle.isOn;
-
-                if (fpsMonitor != null)
-                    fpsMonitor.Add("flipHorizontal", webCamTextureToMatHelper.flipHorizontal.ToString());
-            }
+            webCamTextureToMatHelper.flipHorizontal = isFlipped;
         }
 
         public enum FPSPreset : int

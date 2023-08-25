@@ -59,13 +59,13 @@ namespace OpenCVForUnityExample.DnnModel
             facial_expression_recognition_net.setPreferableTarget(this.target);
 
             classNames = new List<string>();
-            classNames.Add("angry");
-            classNames.Add("disgust");
-            classNames.Add("fearful");
-            classNames.Add("happy");
-            classNames.Add("neutral");
-            classNames.Add("sad");
-            classNames.Add("surprised");
+            classNames.Add("Angry");
+            classNames.Add("Disgust");
+            classNames.Add("Fearful");
+            classNames.Add("Happy");
+            classNames.Add("Neutral");
+            classNames.Add("Sad");
+            classNames.Add("Surprised");
 
             palette = new List<Scalar>();
             palette.Add(new Scalar(255, 56, 56, 255));
@@ -164,10 +164,16 @@ namespace OpenCVForUnityExample.DnnModel
         public virtual void visualize(Mat image, List<Mat> results, Mat faces, bool print_results = false, bool isRGB = false)
         {
             if (image.IsDisposed)
+            {
+                Debug.LogWarning("Image disposed");
                 return;
+            }
 
             if (results.Count != faces.rows())
+            {
+                Debug.Log(results.Count + " : " + faces.rows());
                 return;
+            }
 
             StringBuilder sb = null;
 
@@ -213,6 +219,19 @@ namespace OpenCVForUnityExample.DnnModel
 
             if (print_results)
                 Debug.Log(sb);
+        }
+
+        public string GetData(List<Mat> results)
+        {
+            if (results.Count == 0)
+            {
+                Debug.Log("No face");
+                return "No Face";
+            }
+
+            ClassificationData bmData = getBestMatchData(results[0]);
+
+            return getClassLabel(bmData.cls);
         }
 
         public virtual void dispose()
