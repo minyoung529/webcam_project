@@ -19,17 +19,29 @@ public class DinoObstacleGenerator : MonoBehaviour
     [SerializeField]
     private Transform spawnPosition;
 
+    private bool isSpawning = false;
+
     private void Awake()
     {
-        for(int i = 0; i < obstaclePrefabs.Length; i++)
+        poolDict = new Dictionary<Type, ObjectPool<DinoObstacle>>();
+
+        for (int i = 0; i < obstaclePrefabs.Length; i++)
         {
-            ObjectPool<DinoObstacle> pool = new(() => OnCreate(obstaclePrefabs[i]), OnGet, OnRelease, OnDestroyed);
-            poolDict.Add(obstaclePrefabs[i].GetType(), pool);;
+            DinoObstacle prefab = obstaclePrefabs[i];
+
+            ObjectPool<DinoObstacle> pool = new(() => OnCreate(prefab), OnGet, OnRelease, OnDestroyed, true, 2);
+            poolDict.Add(prefab.GetType(), pool); ;
         }
+
+        EventManager.StartListening(EventName.OnMiniGameStart, GameStart);
+        EventManager.StartListening(EventName.OnMiniGameStop, GameStop);
+        EventManager.StartListening(EventName.OnMiniGameOver, GameOver);
     }
 
     private void Update()
     {
+        if (!isSpawning) return;
+
         counter += Time.deltaTime;
 
         if (counter >= spawnInterval)
@@ -42,7 +54,27 @@ public class DinoObstacleGenerator : MonoBehaviour
     private void Spawn()
     {
         int rand = Random.Range(0, obstaclePrefabs.Length);     // 0 ~ Count-1
-        poolDict[obstaclePrefabs[rand].GetType()].Get();        // ·£´ý Å¸ÀÔ
+        Type type = obstaclePrefabs[rand].GetType();
+
+        if (poolDict.ContainsKey(type))
+        {
+            poolDict[type].Get();        // ·£´ý Å¸ÀÔ
+        }
+    }
+
+    private void GameStart()
+    {
+        isSpawning = true;
+    }
+
+    private void GameStop()
+    {
+        isSpawning = false;
+    }
+
+    private void GameOver()
+    {
+        isSpawning = false;
     }
 
     #region POOL
@@ -76,4 +108,11 @@ public class DinoObstacleGenerator : MonoBehaviour
         obstacle.OnDestroyed();
     }
     #endregion
+
+    private void OnDestroy()
+    {
+        EventManager.StopListening(EventName.OnMiniGameStart, GameStart);
+        EventManager.StopListening(EventName.OnMiniGameStop, GameStop);
+        EventManager.StopListening(EventName.OnMiniGameOver, GameOver);
+    }
 }

@@ -9,6 +9,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 namespace DlibFaceLandmarkDetectorExample
 {
@@ -99,10 +100,18 @@ namespace DlibFaceLandmarkDetectorExample
             texture = new Texture2D(webCamTextureMat.cols(), webCamTextureMat.rows(), TextureFormat.RGBA32, false);
             OpenCVForUnity.UnityUtils.Utils.fastMatToTexture2D(webCamTextureMat, texture);
 
-            gameObject.GetComponent<Renderer>().material.mainTexture = texture;
+            if(gameObject.GetComponent<Renderer>())
+            {
+                gameObject.GetComponent<Renderer>().material.mainTexture = texture;
+            }
+            else
+            {
+                gameObject.GetComponent<Image>().material.mainTexture = texture;
+            }
+            
 
-            gameObject.transform.localScale = new Vector3(webCamTextureMat.cols(), webCamTextureMat.rows(), 1);
-            Debug.Log("Screen.width " + Screen.width + " Screen.height " + Screen.height + " Screen.orientation " + Screen.orientation);
+            //gameObject.transform.localScale = new Vector3(webCamTextureMat.cols(), webCamTextureMat.rows(), 1);
+            //Debug.Log("Screen.width " + Screen.width + " Screen.height " + Screen.height + " Screen.orientation " + Screen.orientation);
 
             if (fpsMonitor != null)
             {
@@ -118,14 +127,14 @@ namespace DlibFaceLandmarkDetectorExample
 
             float widthScale = (float)Screen.width / width;
             float heightScale = (float)Screen.height / height;
-            if (widthScale < heightScale)
-            {
-                Camera.main.orthographicSize = (width * (float)Screen.height / (float)Screen.width) / 2;
-            }
-            else
-            {
-                Camera.main.orthographicSize = height / 2;
-            }
+            //if (widthScale < heightScale)
+            //{
+            //    Camera.main.orthographicSize = (width * (float)Screen.height / (float)Screen.width) / 2;
+            //}
+            //else
+            //{
+            //    Camera.main.orthographicSize = height / 2;
+            //}
         }
 
         /// <summary>

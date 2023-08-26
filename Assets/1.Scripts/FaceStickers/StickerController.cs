@@ -21,6 +21,7 @@ public class StickerController : MonoBehaviour
     void Start()
     {
         curSticker = CreateSticker(0);
+        transform.SetParent(null);
     }
 
     private void Update()

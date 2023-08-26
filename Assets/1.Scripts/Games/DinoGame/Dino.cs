@@ -12,12 +12,29 @@ public class Dino : MonoBehaviour
     private float jumpForce = 10f;
     private bool isJumping = false;
 
+    private FaceController faceController;
+
+    private bool isGameOver = false;
+
     private void Awake()
     {
         rigid = GetComponent<Rigidbody>();
         animator = GetComponent<Animator>();
     }
 
+    private void Start()
+    {
+        faceController = FindObjectOfType<FaceController>();
+
+        if (faceController)
+        {
+            faceController.Event.StartListening((int)FaceEvent.MouthOpen, Jump);
+        }
+
+        EventManager.StartListening(EventName.OnMiniGameStart, OnGameRestart);
+    }
+
+#if UNITY_EDITOR
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.Space))
@@ -35,9 +52,9 @@ public class Dino : MonoBehaviour
             SlidingEnd();
         }
     }
+#endif
 
     #region JUMP
-
     private void Jump()
     {
         if (isJumping) return;
@@ -53,17 +70,6 @@ public class Dino : MonoBehaviour
     {
         isJumping = false;
     }
-
-    private void OnCollisionEnter(Collision collision)
-    {
-        if (!isJumping) return;
-
-        // ¹Ù´Ú Ã¼Å©
-        if (collision.gameObject.CompareTag("Bottom"))
-        {
-            JumpEnd();
-        }
-    }
     #endregion
 
     #region SLIDING
@@ -78,4 +84,44 @@ public class Dino : MonoBehaviour
         animator.SetBool("Sliding", false);
     }
     #endregion
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (!isJumping) return;
+
+        // ¹Ù´Ú Ã¼Å©
+        if (collision.gameObject.CompareTag("Bottom"))
+        {
+            JumpEnd();
+        }
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (isGameOver) return;
+
+        if (other.gameObject.CompareTag("Obstacle"))
+        {
+            EventManager.TriggerEvent(EventName.OnMiniGameOver);
+            animator.SetTrigger("Dead");
+            isGameOver = true;
+        }
+    }
+
+    private void OnGameRestart()
+    {
+        Debug.Log("RESTART");
+        isGameOver = false;
+        animator.SetTrigger("Restart");
+    }
+
+    private void OnDestroy()
+    {
+        if (faceController)
+        {
+            faceController.Event.StopListening((int)FaceEvent.MouthOpen, Jump);
+        }
+
+        EventManager.StopListening(EventName.OnMiniGameStart, OnGameRestart);
+    }
 }

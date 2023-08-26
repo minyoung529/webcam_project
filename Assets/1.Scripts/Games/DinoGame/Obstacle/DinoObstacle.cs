@@ -14,6 +14,14 @@ public class DinoObstacle : MonoBehaviour
 
     public Action<DinoObstacle> ReleaseAction { get; set; }
 
+    private bool isRelease = false;
+
+    private void Awake()
+    {
+        // 재시작일 경우
+        EventManager.StartListening(EventName.OnMiniGameStart, Release);
+    }
+
     private void Update()
     {
         if (gameObject.activeSelf)
@@ -23,7 +31,7 @@ public class DinoObstacle : MonoBehaviour
             if (distance > MAX_DISTANCE)
             {
                 // 릴리즈
-                ReleaseAction?.Invoke(this);
+                Release();
             }
         }
     }
@@ -36,6 +44,12 @@ public class DinoObstacle : MonoBehaviour
     }
 
     #region POOL
+    private void Release()
+    {
+        if (!isRelease)
+            ReleaseAction?.Invoke(this);
+    }
+
     public void OnCreated()
     {
 
@@ -44,18 +58,20 @@ public class DinoObstacle : MonoBehaviour
     public void OnGet()
     {
         distance = 0f;
+        isRelease = false;
         gameObject.SetActive(true);
     }
 
     public void OnRelease()
     {
         distance = 0f;
+        isRelease = true;
         gameObject.SetActive(false);
     }
 
     public void OnDestroyed()
     {
-
+        EventManager.StopListening(EventName.OnMiniGameStart, Release);
     }
     #endregion
 }

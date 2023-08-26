@@ -137,5 +137,10 @@ public enum EventName
     OnCharacterLoadComplete,
     OnVideoLoadComplete,
     OnSetTextureURL,
+
+    OnMiniGameStart,
+    OnMiniGameStop,
+    OnMiniGameOver,
+
     Count
 }
