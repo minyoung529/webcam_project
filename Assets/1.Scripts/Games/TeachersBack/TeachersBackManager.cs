@@ -7,6 +7,8 @@ public class TeachersBackManager : MonoBehaviour
     [SerializeField] private TeachersBackPlayer player;
     [SerializeField] private TeachersBackTeacher teacher;
 
+    [SerializeField] private CanvasGroup failMenu;
+
     private int snackCount = 0;
     private const int FullSnackCount = 10;
 
@@ -21,21 +23,29 @@ public class TeachersBackManager : MonoBehaviour
         StartGame();
     }
 
-    private void StartGame()
+    public void StartGame()
     {
         Init();
+    }
+    
+    public void StopGame()
+    {
     }
 
     private void Init()
     {
+        failMenu.alpha=0;
         snackCount = FullSnackCount;
+
+        player.InitState();
+        teacher.Init();
     }
 
     private void CheckPlayerEating(bool value)
     {
-        if(teacher.TeacherState == TeachersBackTeacherState.FINDING && player.PlayerState == TeachersBackPlayerState.EAT)
+        if(teacher.TeacherState == TeachersBackTeacherState.FINDING)
         {
-            Fail();
+            if (player.PlayerState == TeachersBackPlayerState.EAT) Fail();
         }
         else
         {
@@ -45,7 +55,15 @@ public class TeachersBackManager : MonoBehaviour
 
     private void Fail()
     {
-        Debug.Log("Fail");
+        player.ChangeState(TeachersBackPlayerState.FAIL);
+        teacher.Scold();
+        Invoke("FailUIUpdate", 1f);
+    }
+    private void FailUIUpdate()
+    {
+        teacher.StopPlay();
+
+        failMenu.alpha = 1;
     }
 
     private void Success()
@@ -68,6 +86,7 @@ public enum TeachersBackPlayerState
     LEFT,
     RIGHT,
     DOWN,
+    FAIL,
 
     COUNT
 }
@@ -77,6 +96,7 @@ public enum TeachersBackTeacherState
     None,
     
     FINDING,
+    SCOLD,
 
     COUNT
 }

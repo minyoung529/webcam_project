@@ -9,7 +9,7 @@ public class TeachersBackTeacher : MonoBehaviour
     public TeachersBackTeacherState TeacherState => teacherState;
 
     private float maxFindingWaitTime = 10f;
-    private float maxIdleWaitTime = 10f;
+    private float maxIdleWaitTime = 5f;
 
     private Animator anim;
 
@@ -18,24 +18,31 @@ public class TeachersBackTeacher : MonoBehaviour
         anim = GetComponent<Animator>();
     }
 
-    private void Start()
-    {
-        Init();
-    }
-
-    private void Init()
+    public void Init()
     {
         teacherState = TeachersBackTeacherState.None;
         IdleState();
     }
+    public void StopPlay()
+    {
+        StopAllCoroutines();
+        teacherState = TeachersBackTeacherState.COUNT;
+    }
 
     #region State
 
+    public void Scold()
+    {
+        teacherState = TeachersBackTeacherState.SCOLD;
+        transform.rotation = Quaternion.Euler(0, 145f, 0);
+        anim.SetTrigger("Scold");
+    }
+
     private IEnumerator RandomState()
     {
-        float randomWaitTime = Random.RandomRange(1f, maxFindingWaitTime);
+        float randomWaitTime = Random.Range(1f, maxFindingWaitTime);
         yield return new WaitForSeconds(randomWaitTime);
-        Finding();
+        FindState();
     }
 
     private void FindState()
@@ -45,14 +52,20 @@ public class TeachersBackTeacher : MonoBehaviour
 
     private IEnumerator Finding()
     {
-        float randomWaitTime = Random.RandomRange(1f, maxIdleWaitTime);
+        teacherState = TeachersBackTeacherState.FINDING;
+        float randomWaitTime = Random.Range(1f, maxIdleWaitTime);
         EventManager<bool>.TriggerEvent(EventName.OnTeacherFinding, true);
+
+        anim.SetBool("Finding", true);
         yield return new WaitForSeconds(randomWaitTime);
+        anim.SetBool("Finding", false);
         IdleState();
     }
 
     private void IdleState()
     {
+        teacherState = TeachersBackTeacherState.None;
+        transform.rotation = Quaternion.Euler(0, 0, 0);
         StartCoroutine(RandomState());
     }
     #endregion

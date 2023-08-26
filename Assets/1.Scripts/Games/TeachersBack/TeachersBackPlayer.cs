@@ -12,15 +12,16 @@ public class TeachersBackPlayer : MonoBehaviour
 
     private Dictionary<TeachersBackPlayerState, Action> stateAction = new Dictionary<TeachersBackPlayerState, Action>();
 
+    private bool inputLock = false;
+
     private void Awake()
     {
         anim = GetComponent<Animator>();
-
-        InitState();
     }
 
     private void Update()
     {
+        if (inputLock) return;
         if(Input.GetKeyDown(KeyCode.Space))
         {
             ChangeState(TeachersBackPlayerState.EAT);
@@ -41,25 +42,30 @@ public class TeachersBackPlayer : MonoBehaviour
     }
     
     #region Set State
-    private void InitState()
+    public void InitState()
     {
+        inputLock = false;
+
+        stateAction.Clear();
         stateAction.Add(TeachersBackPlayerState.None, IdleState);
         stateAction.Add(TeachersBackPlayerState.EAT, EatState);
         stateAction.Add(TeachersBackPlayerState.LEFT, LeftState);
         stateAction.Add(TeachersBackPlayerState.RIGHT, RightState);
         stateAction.Add(TeachersBackPlayerState.DOWN, DownState);
+        stateAction.Add(TeachersBackPlayerState.FAIL, FailState);
     }
     #endregion
 
     #region State Function
     private void IdleState()
     {
-
+        anim.SetBool("Eating", false);
     }
     
     private void EatState()
     {
         EventManager<bool>.TriggerEvent(EventName.OnStudentEating, true);
+        anim.SetBool("Eating", true);
     }
     
     private void LeftState()
@@ -75,6 +81,11 @@ public class TeachersBackPlayer : MonoBehaviour
     private void DownState()
     {
 
+    }
+    private void FailState()
+    {
+        inputLock = true;
+        anim.SetTrigger("Fail");
     }
     #endregion
 }
