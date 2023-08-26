@@ -41,7 +41,7 @@ public class ColorPlayer : MonoBehaviour
 
     private void Init()
     {
-        SetColor(ColorEnum.Red);
+        SetColor(ColorEnum.Yellow);
     }
 
     #region Move
