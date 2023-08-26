@@ -21,7 +21,7 @@ public class FloorBlock : MonoBehaviour
 
     private ColorEnum colorType = ColorEnum.Count;
 
-    private Vector3 startPos = new Vector3(0f, -10f, -45f);
+    private Vector3 startPos = new Vector3(0f, -20f, -45f);
 
     private bool canMove = true;
 
