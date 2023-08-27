@@ -8301,8 +8301,6 @@ namespace OpenCVForUnity.ImgprocModule
             if (dst != null) dst.ThrowIfDisposed();
 
             imgproc_Imgproc_cvtColor_11(src.nativeObj, dst.nativeObj, code);
-
-
         }
 
 

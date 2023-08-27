@@ -180,78 +180,6 @@ namespace OpenCVForUnityExample
 #endif
                 webCamTextureToMatHelper.Initialize();
             }
-            else
-            {
-                /////////////////////
-                // TEST
-
-                var getFilePathAsync_0_Coroutine = Utils.getFilePathAsync("OpenCVForUnity/dnn/" + testInputImage, (result) =>
-                {
-                    string test_input_image_filepath = result;
-                    if (string.IsNullOrEmpty(test_input_image_filepath)) Debug.Log("The file:" + testInputImage + " did not exist in the folder “Assets/StreamingAssets/OpenCVForUnity/dnn”.");
-
-                    Mat img = Imgcodecs.imread(test_input_image_filepath);
-                    if (img.empty())
-                    {
-                        img = new Mat(424, 640, CvType.CV_8UC3, new Scalar(0, 0, 0));
-                        Imgproc.putText(img, testInputImage + " is not loaded.", new Point(5, img.rows() - 30), Imgproc.FONT_HERSHEY_SIMPLEX, 0.7, new Scalar(255, 255, 255, 255), 2, Imgproc.LINE_AA, false);
-                        Imgproc.putText(img, "Please read console message.", new Point(5, img.rows() - 10), Imgproc.FONT_HERSHEY_SIMPLEX, 0.7, new Scalar(255, 255, 255, 255), 2, Imgproc.LINE_AA, false);
-                    }
-                    else
-                    {
-                        TickMeter tm = new TickMeter();
-                        tm.start();
-
-                        Mat faces = faceDetector.infer(img);
-
-                        tm.stop();
-                        Debug.Log("YuNetFaceDetector Inference time, ms: " + tm.getTimeMilli());
-
-                        List<Mat> expressions = new List<Mat>();
-
-                        // Estimate the expression of each face
-                        for (int i = 0; i < faces.rows(); ++i)
-                        {
-                            tm.reset();
-                            tm.start();
-
-                            // Facial expression recognizer inference
-                            Mat facialExpression = facialExpressionRecognizer.infer(img, faces.row(i));
-
-                            tm.stop();
-                            Debug.Log("FacialExpressionRecognizer Inference time (preprocess + infer + postprocess), ms: " + tm.getTimeMilli());
-
-                            if (!facialExpression.empty())
-                                expressions.Add(facialExpression);
-                        }
-                        faceDetector.visualize(img, faces, true, false);
-                        facialExpressionRecognizer.visualize(img, expressions, faces, true, false);
-                    }
-
-                    gameObject.transform.localScale = new Vector3(img.width(), img.height(), 1);
-                    float imageWidth = img.width();
-                    float imageHeight = img.height();
-                    float widthScale = (float)Screen.width / imageWidth;
-                    float heightScale = (float)Screen.height / imageHeight;
-                    if (widthScale < heightScale)
-                    {
-                        Camera.main.orthographicSize = (imageWidth * (float)Screen.height / (float)Screen.width) / 2;
-                    }
-                    else
-                    {
-                        Camera.main.orthographicSize = imageHeight / 2;
-                    }
-
-                    Imgproc.cvtColor(img, img, Imgproc.COLOR_BGR2RGB);
-                    Texture2D texture = new Texture2D(img.cols(), img.rows(), TextureFormat.RGB24, false);
-                    Utils.matToTexture2D(img, texture);
-                    gameObject.GetComponent<Renderer>().material.mainTexture = texture;
-
-                });
-                StartCoroutine(getFilePathAsync_0_Coroutine);
-
-                /////////////////////
-            }
         }
 
         /// <summary>
@@ -325,7 +253,6 @@ namespace OpenCVForUnityExample
         // Update is called once per frame
         void Update()
         {
-
             if (webCamTextureToMatHelper.IsPlaying() && webCamTextureToMatHelper.DidUpdateThisFrame())
             {
 

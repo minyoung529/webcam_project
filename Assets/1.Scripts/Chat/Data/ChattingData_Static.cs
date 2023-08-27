@@ -6,24 +6,24 @@ public partial class ChattingData
 {
     private static Dictionary<int, object> chattingDatas = new();
 
-    public static void Set(ChattingDataType chattingDataType, object obj)
+    public static void Set(InformationType chattingDataType, object obj)
     {
-        chattingDatas[GetHash(chattingDataType)] = obj;
+        chattingDatas[GetHash(chattingDataType.ToString())] = obj;
     }
 
     /// <summary>
     /// 채팅을 기반으로 저장했던 데이터를 반환하는 함수
     /// (ex. 얼굴 표정, 사람 수, 반응 이모지 등등)
     /// </summary>
-    public static T Get<T>(ChattingDataType chattingDataType)
-        => (T)chattingDatas[GetHash(chattingDataType)];
+    public static T Get<T>(InformationType chattingDataType)
+        => (T)chattingDatas[GetHash(chattingDataType.ToString())];
 
     public static T Get<T>(string chattingDataType)
-    => (T)chattingDatas[GetHash(chattingDataType)];
+    => (T)chattingDatas[GetHash(chattingDataType.ToString())];
 
     public static string GetString<T>(string chattingDataType)
     {
-        return ((T)chattingDatas[GetHash(chattingDataType)]).ToString();
+        return ((T)chattingDatas[GetHash(chattingDataType.ToString())]).ToString();
     }
 
 
@@ -33,7 +33,7 @@ public partial class ChattingData
     }
 }
 
-public enum ChattingDataType
+public enum InformationType
 {
     // Picture
     PersonCount,    // 직전 사진의 사람 수
