@@ -142,5 +142,10 @@ public enum EventName
     OnMiniGameStop,
     OnMiniGameOver,
 
+    OnMiniGameActionStarted,
+    OnMiniGameActionEnded,
+    OnMiniGameActionSuccessed,
+    OnMiniGameActionFailed,
+
     Count
 }

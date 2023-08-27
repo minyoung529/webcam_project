@@ -7,7 +7,7 @@ using UnityEngine;
 public class DinoObstacle : MonoBehaviour
 {
     [SerializeField]
-    protected float speedMultiplier;
+    protected float speedMultiplier = 1f;
 
     private float distance;
     private const float MAX_DISTANCE = 25f;
