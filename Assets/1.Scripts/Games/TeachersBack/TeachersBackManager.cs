@@ -14,8 +14,7 @@ public class TeachersBackManager : MonoBehaviour
 
     private void Awake()
     {
-        EventManager<bool>.StartListening(EventName.OnTeacherFinding, CheckPlayerEating);
-        EventManager<bool>.StartListening(EventName.OnStudentEating, CheckPlayerEating);
+       
     }
 
     private void Start()
@@ -27,17 +26,17 @@ public class TeachersBackManager : MonoBehaviour
     {
         Init();
     }
-    
-    public void StopGame()
-    {
-    }
 
     private void Init()
     {
-        failMenu.alpha=0;
+        failMenu.alpha = 0.0f;
+        failMenu.gameObject.SetActive(false);
         snackCount = FullSnackCount;
 
-        player.InitState();
+        EventManager<bool>.StartListening(EventName.OnTeacherFinding, CheckPlayerEating);
+        EventManager<bool>.StartListening(EventName.OnStudentEating, CheckPlayerEating);
+
+        player.Init();
         teacher.Init();
     }
 
@@ -57,13 +56,19 @@ public class TeachersBackManager : MonoBehaviour
     {
         player.ChangeState(TeachersBackPlayerState.FAIL);
         teacher.Scold();
-        Invoke("FailUIUpdate", 1f);
-    }
-    private void FailUIUpdate()
-    {
-        teacher.StopPlay();
 
-        failMenu.alpha = 1;
+        StartCoroutine(StopGame());
+    }
+
+
+    private IEnumerator StopGame()
+    {
+        yield return new WaitForSeconds(3f);
+        teacher.StopPlay();
+        player.StopPlay();
+
+        failMenu.alpha= 1.0f;
+        failMenu.gameObject.SetActive(true);
     }
 
     private void Success()

@@ -9,10 +9,10 @@ public class TeachersBackPlayer : MonoBehaviour
     public TeachersBackPlayerState PlayerState => playerState;
 
     private Animator anim;
+    private bool inputLock = true;
 
     private Dictionary<TeachersBackPlayerState, Action> stateAction = new Dictionary<TeachersBackPlayerState, Action>();
 
-    private bool inputLock = false;
 
     private void Awake()
     {
@@ -21,15 +21,19 @@ public class TeachersBackPlayer : MonoBehaviour
 
     private void Update()
     {
-        if (inputLock) return;
-        if(Input.GetKeyDown(KeyCode.Space))
+        if (!inputLock)
         {
-            ChangeState(TeachersBackPlayerState.EAT);
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                Debug.Log("Eat");
+                ChangeState(TeachersBackPlayerState.EAT);
+            }
+            else if (Input.GetKeyUp(KeyCode.Space))
+            {
+                ChangeState(TeachersBackPlayerState.None);
+            }
         }
-        else if(Input.GetKeyUp(KeyCode.Space))
-        {
-            ChangeState(TeachersBackPlayerState.None);
-        }
+        
     }
 
     public void ChangeState(TeachersBackPlayerState changeState)
@@ -42,10 +46,8 @@ public class TeachersBackPlayer : MonoBehaviour
     }
     
     #region Set State
-    public void InitState()
+    public void Init()
     {
-        inputLock = false;
-
         stateAction.Clear();
         stateAction.Add(TeachersBackPlayerState.None, IdleState);
         stateAction.Add(TeachersBackPlayerState.EAT, EatState);
@@ -53,12 +55,20 @@ public class TeachersBackPlayer : MonoBehaviour
         stateAction.Add(TeachersBackPlayerState.RIGHT, RightState);
         stateAction.Add(TeachersBackPlayerState.DOWN, DownState);
         stateAction.Add(TeachersBackPlayerState.FAIL, FailState);
+
+        ChangeState(TeachersBackPlayerState.None);
+    }
+
+    public void StopPlay()
+    {
+        anim.SetBool("Eating", false);
     }
     #endregion
 
     #region State Function
     private void IdleState()
     {
+        inputLock = false;
         anim.SetBool("Eating", false);
     }
     

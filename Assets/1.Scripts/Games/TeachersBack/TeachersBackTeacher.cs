@@ -20,25 +20,36 @@ public class TeachersBackTeacher : MonoBehaviour
 
     public void Init()
     {
-        teacherState = TeachersBackTeacherState.None;
+        StopAllCoroutines();
+        anim.SetBool("Scold", false);
+        transform.eulerAngles = new Vector3(0, 0, 0);
         IdleState();
     }
     public void StopPlay()
     {
         StopAllCoroutines();
-        teacherState = TeachersBackTeacherState.COUNT;
+        anim.SetBool("Finding", false);
+        teacherState = TeachersBackTeacherState.None;
     }
-
     #region State
 
     public void Scold()
     {
         teacherState = TeachersBackTeacherState.SCOLD;
-        transform.rotation = Quaternion.Euler(0, 145f, 0);
-        anim.SetTrigger("Scold");
+
+        transform.eulerAngles = new Vector3(0, 100, 0);
+        anim.SetBool("Scold", true);
+    }
+    
+    private void IdleState()
+    {
+        teacherState = TeachersBackTeacherState.None;
+        transform.eulerAngles = new Vector3(0, 0, 0);
+        anim.SetBool("Finding", false);
+        StartCoroutine(Idle());
     }
 
-    private IEnumerator RandomState()
+    private IEnumerator Idle()
     {
         float randomWaitTime = Random.Range(1f, maxFindingWaitTime);
         yield return new WaitForSeconds(randomWaitTime);
@@ -58,15 +69,8 @@ public class TeachersBackTeacher : MonoBehaviour
 
         anim.SetBool("Finding", true);
         yield return new WaitForSeconds(randomWaitTime);
-        anim.SetBool("Finding", false);
         IdleState();
     }
 
-    private void IdleState()
-    {
-        teacherState = TeachersBackTeacherState.None;
-        transform.rotation = Quaternion.Euler(0, 0, 0);
-        StartCoroutine(RandomState());
-    }
     #endregion
 }
