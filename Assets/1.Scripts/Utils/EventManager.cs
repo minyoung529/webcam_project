@@ -139,5 +139,14 @@ public enum EventName
     OnSetTextureURL,
     OnSwitchColorFail,
 
+    OnMiniGameStart,
+    OnMiniGameStop,
+    OnMiniGameOver,
+
+    OnMiniGameActionStarted,
+    OnMiniGameActionEnded,
+    OnMiniGameActionSuccessed,
+    OnMiniGameActionFailed,
+
     Count
 }
