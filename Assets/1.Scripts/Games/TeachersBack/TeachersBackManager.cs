@@ -29,7 +29,7 @@ public class TeachersBackManager : MonoBehaviour
 
         EventManager<bool>.StartListening(EventName.OnTeacherFinding, CheckPlayerEating);
         EventManager<bool>.StartListening(EventName.OnStudentEating, CheckPlayerEating);
-        EventManager<bool>.StartListening(EventName.OnTeachersBackFail, NotEat);
+        EventManager.StartListening(EventName.OnMiniGameOver, Fail);
 
         player.Init();
         teacher.Init();
@@ -41,10 +41,6 @@ public class TeachersBackManager : MonoBehaviour
         {
             if (player.PlayerState == TeachersBackPlayerState.EAT) Fail();
         }
-        else
-        {
-
-        }
     }
 
     private void Fail()
@@ -55,12 +51,6 @@ public class TeachersBackManager : MonoBehaviour
         StartCoroutine(StopGame());
     }
     
-    private void NotEat(bool value)
-    {
-        Fail();
-    }
-
-
     private IEnumerator StopGame()
     {
         yield return new WaitForSeconds(3f);
@@ -75,7 +65,7 @@ public class TeachersBackManager : MonoBehaviour
     {
         EventManager<bool>.StopListening(EventName.OnTeacherFinding, CheckPlayerEating);
         EventManager<bool>.StopListening(EventName.OnStudentEating, CheckPlayerEating);
-        EventManager<bool>.StopListening(EventName.OnTeachersBackFail, NotEat);
+        EventManager.StopListening(EventName.OnMiniGameOver, Fail);
     }
 }
 

@@ -22,33 +22,41 @@ public class TeachersBackPlayer : MonoBehaviour
     public int SnackCount { get { return snackCount; } set { snackCount = value; UpdateCountText(); } }
     private float addValue => (1f / FullSnackCount);
 
+    private FaceController faceController;
+
     private Dictionary<TeachersBackPlayerState, Action> stateAction = new Dictionary<TeachersBackPlayerState, Action>();
 
     private void Awake()
     {
         anim = GetComponent<Animator>();
     }
-
+    private void Start()
+    {
+        faceController = GetComponent<FaceController>();
+        if (faceController)
+        {
+            faceController.Event.StartListening((int)FaceEvent.MouthOpen, StartEatState);
+            faceController.Event.StartListening((int)FaceEvent.MouthClose, EndEatState);
+        }
+    }
     private void Update()
     {
-        if (!inputLock)
-        {
-            if (Input.GetKeyDown(KeyCode.Space))
-            {
-                ChangeState(TeachersBackPlayerState.EAT);
-            }
-            else if (Input.GetKeyUp(KeyCode.Space))
-            {
-                StopAllCoroutines();
-                ChangeState(TeachersBackPlayerState.None);
-            }
-        }
-
         if (scoreSlider.IsActive())
         {
             SliderValue();
             CheckSlider();
         }
+    }
+
+    private void StartEatState()
+    {
+        if (inputLock) return;
+                ChangeState(TeachersBackPlayerState.EAT);
+    }
+    private void EndEatState()
+    {
+        StopAllCoroutines();
+        ChangeState(TeachersBackPlayerState.None);
     }
 
 
@@ -136,7 +144,7 @@ public class TeachersBackPlayer : MonoBehaviour
         }
         else if (scoreSlider.value <= 0f)
         {
-            EventManager<bool>.TriggerEvent(EventName.OnTeachersBackFail, true);
+            EventManager<TeachersBackPlayer>.TriggerEvent(EventName.OnMiniGameActionFailed, this);
             return;
         }
     }
@@ -160,4 +168,14 @@ public class TeachersBackPlayer : MonoBehaviour
     }
 
     #endregion
+
+    private void OnDestroy()
+    {
+        faceController = GetComponent<FaceController>();
+        if (faceController)
+        {
+            faceController.Event.StartListening((int)FaceEvent.MouthOpen, StartEatState);
+            faceController.Event.StartListening((int)FaceEvent.MouthClose, EndEatState);
+        }
+    }
 }
