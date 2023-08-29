@@ -25,6 +25,7 @@ public class PenguinGenerator : MonoBehaviour
     [SerializeField]
     private Transform root;
 
+
     private void Awake()
     {
         pool = new(OnCreate, OnGet, OnRelease, OnDestroyed, true, 5);

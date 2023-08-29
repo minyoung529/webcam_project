@@ -34,6 +34,8 @@ public class PenguinGameController : MonoBehaviour
 
     private PenguinGenerator generator;
 
+    private FaceController faceController;
+
     private void Awake()
     {
         generator = GetComponent<PenguinGenerator>();
@@ -43,6 +45,7 @@ public class PenguinGameController : MonoBehaviour
         EventManager<Penguin>.StartListening(EventName.OnMiniGameActionSuccessed, OnGameSuccessed);
         EventManager<Penguin>.StartListening(EventName.OnMiniGameActionFailed, OnGameFailed);
     }
+
 
     private void OnGameFailed(Penguin penguin)
     {
@@ -62,6 +65,13 @@ public class PenguinGameController : MonoBehaviour
     private void Start()
     {
         EventManager.TriggerEvent(EventName.OnMiniGameStart);
+
+        faceController = FindObjectOfType<FaceController>();
+
+        if (faceController)
+        {
+            faceController.Event.StartListening((int)FaceEvent.MouthOpen, BubblePop);
+        }
     }
 
 #if UNITY_EDITOR
@@ -79,6 +89,7 @@ public class PenguinGameController : MonoBehaviour
     {
         if (!ReadyInupt) return;
 
+        Debug.Log("Bubble Pop");    
         EventManager<Penguin>.TriggerEvent(EventName.OnMiniGameActionStarted, generator.PrevPenguin);
         ReadyInupt = false;
     }
@@ -115,5 +126,7 @@ public class PenguinGameController : MonoBehaviour
         EventManager<Penguin>.StopListening(EventName.OnMiniGameActionSuccessed, OnGameSuccessed);
         EventManager<Penguin>.StopListening(EventName.OnMiniGameActionFailed, OnGameFailed);
 
+        if (faceController)
+            faceController.Event.StopListening((int)FaceEvent.MouthOpen, BubblePop);
     }
 }
