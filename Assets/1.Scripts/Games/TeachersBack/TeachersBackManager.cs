@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SocialPlatforms.Impl;
+using UnityEngine.UI;
 
 public class TeachersBackManager : MonoBehaviour
 {
@@ -9,13 +11,6 @@ public class TeachersBackManager : MonoBehaviour
 
     [SerializeField] private CanvasGroup failMenu;
 
-    private int snackCount = 0;
-    private const int FullSnackCount = 10;
-
-    private void Awake()
-    {
-       
-    }
 
     private void Start()
     {
@@ -31,10 +26,10 @@ public class TeachersBackManager : MonoBehaviour
     {
         failMenu.alpha = 0.0f;
         failMenu.gameObject.SetActive(false);
-        snackCount = FullSnackCount;
 
         EventManager<bool>.StartListening(EventName.OnTeacherFinding, CheckPlayerEating);
         EventManager<bool>.StartListening(EventName.OnStudentEating, CheckPlayerEating);
+        EventManager<bool>.StartListening(EventName.OnTeachersBackFail, NotEat);
 
         player.Init();
         teacher.Init();
@@ -59,6 +54,11 @@ public class TeachersBackManager : MonoBehaviour
 
         StartCoroutine(StopGame());
     }
+    
+    private void NotEat(bool value)
+    {
+        Fail();
+    }
 
 
     private IEnumerator StopGame()
@@ -71,15 +71,11 @@ public class TeachersBackManager : MonoBehaviour
         failMenu.gameObject.SetActive(true);
     }
 
-    private void Success()
-    {
-
-    }
-
     private void OnDestroy()
     {
         EventManager<bool>.StopListening(EventName.OnTeacherFinding, CheckPlayerEating);
         EventManager<bool>.StopListening(EventName.OnStudentEating, CheckPlayerEating);
+        EventManager<bool>.StopListening(EventName.OnTeachersBackFail, NotEat);
     }
 }
 
@@ -88,9 +84,6 @@ public enum TeachersBackPlayerState
     None,
 
     EAT,
-    LEFT,
-    RIGHT,
-    DOWN,
     FAIL,
 
     COUNT

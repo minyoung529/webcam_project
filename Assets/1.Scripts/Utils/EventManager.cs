@@ -140,6 +140,7 @@ public enum EventName
     OnSwitchColorFail,
     OnTeacherFinding,
     OnStudentEating,
+    OnTeachersBackFail,
 
     Count
 }

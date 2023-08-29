@@ -16,6 +16,9 @@ public class SwitchColorManager : MonoBehaviour
 
     [Header("Score UI")]
     [SerializeField] TextMeshProUGUI scoreText;
+    [Header("Score UI")]
+    [SerializeField] GameObject gameOverPanel;
+    [SerializeField] TextMeshProUGUI gameOverScoreText;
     
     private Transform playerStartPos;
     
@@ -57,12 +60,13 @@ public class SwitchColorManager : MonoBehaviour
     {
         if (!isGame) return;
 
-        Debug.Log("Fail");
         onEndEvent?.Invoke();
 
         player.transform.position = playerStartPos.position;
         isGame = false;
         StopCoroutine(ScoreUP());
+
+        GameOverUI();
     }
 
     public void LevelUP()
@@ -100,6 +104,14 @@ public class SwitchColorManager : MonoBehaviour
     private void UpdateScoreUI()
     {
         scoreText.SetText(score.ToString());
+    }
+
+    private void GameOverUI()
+    {
+        gameOverScoreText.SetText(score.ToString());
+        gameOverPanel.SetActive(true);
+
+        Time.timeScale = 0f;
     }
 
     #endregion
