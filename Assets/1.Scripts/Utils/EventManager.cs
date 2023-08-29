@@ -142,5 +142,14 @@ public enum EventName
     OnStudentEating,
     OnTeachersBackFail,
 
+    OnMiniGameStart,
+    OnMiniGameStop,
+    OnMiniGameOver,
+
+    OnMiniGameActionStarted,
+    OnMiniGameActionEnded,
+    OnMiniGameActionSuccessed,
+    OnMiniGameActionFailed,
+
     Count
 }

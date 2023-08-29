@@ -36,7 +36,7 @@ public class FloorBlock : MonoBehaviour
 
     private void Init()
     {
-        RandomNextColor();
+        SetColor(ColorEnum.Yellow);
     }
 
     private void Update()
@@ -56,6 +56,7 @@ public class FloorBlock : MonoBehaviour
         if (transform.position.z >= 55f)
         {
             transform.position = startPos;
+            RandomNextColor();
         }
     }
 

@@ -22,7 +22,7 @@ public static class GetColor
 
     public static ColorEnum GetRandomColorEnum()
     {
-        int randomColorIndex = Random.Range(0, (int)ColorEnum.Count);
+        int randomColorIndex = Random.Range(1, (int)ColorEnum.Count);
 
         return (ColorEnum)randomColorIndex;
     }
