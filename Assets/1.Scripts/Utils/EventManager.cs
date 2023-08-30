@@ -138,7 +138,6 @@ public enum EventName
     OnVideoLoadComplete,
     OnSetTextureURL,
 
-    OnSwitchColorFail,
     OnTeacherFinding,
     OnStudentEating,
 

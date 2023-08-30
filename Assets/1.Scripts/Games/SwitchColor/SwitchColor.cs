@@ -2,98 +2,30 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Experimental.GlobalIllumination;
 
 public class SwitchColor : MonoBehaviour
 {
-    [SerializeField] float floorSpeed = 10f;
-    [SerializeField] FloorBlock[] floors;
+    [SerializeField] private float speed = 5f;
+    private Vector3 playerStartPos;
 
-    [Header("Score UI")]
-    [SerializeField] TextMeshProUGUI scoreText;
-    [Header("Score UI")]
-    [SerializeField] GameObject gameOverPanel;
-    [SerializeField] TextMeshProUGUI gameOverScoreText;
-
-    private Transform playerStartPos;
-
-    private int score = 0;
-    private int level = 1;
-
-    private bool isGame = false;
-
+    private MeshRenderer renderer = null;
     private FaceController faceController;
+
+    private ColorEnum colorType = ColorEnum.Red;
+    public ColorEnum ColorType { get { return colorType; } }
+
+    private bool leftMove = false;
+    private bool rightMove = false;
 
     private void Start()
     {
         faceController = FindObjectOfType<FaceController>();
-        if (faceController)
-        {
-            faceController.Event.StartListening((int)FaceEvent.MouthOpen, SetNextColor);
-        }
-
-        playerStartPos = transform;
-
-        Init();
-        StartGame();
-    }
-
-    #region Game Flow
-
-    public void StartGame()
-    {
-        for (int i = 0; i < floors.Length; i++)
-        {
-            floors[i].SetSpeed(floorSpeed);
-        }
-
-        transform.position = playerStartPos.position;
-        isGame = true;
-        level = 1;
-
-        ScoreTime();
-    }
-
-    public void StopGame()
-    {
-        if (!isGame) return;
-
-        transform.position = playerStartPos.position;
-        isGame = false;
-        StopCoroutine(ScoreUP());
-
-        GameOverUI();
-    }
-
-    public void LevelUP()
-    {
-        level += 1;
-        for (int i = 0; i < floors.Length; i++)
-        {
-            floors[i].SetSpeed(floorSpeed * level);
-        }
-    }
-
-    #endregion
-
-    #region Player
-
-    #region Get
-
-    [SerializeField] private float speed = 5f;
-    public ColorEnum ColorType { get { return colorType; } }
-
-    #endregion
-
-    #region Variable
-
-    private MeshRenderer renderer = null;
-    private ColorEnum colorType = ColorEnum.Red;
-
-    #endregion
-
-    private void Awake()
-    {
         renderer = GetComponentInChildren<MeshRenderer>();
+        playerStartPos = transform.position;
+
+        StartListening();
+        StartGame();
     }
 
     private void Update()
@@ -106,22 +38,67 @@ public class SwitchColor : MonoBehaviour
         Move();
     }
 
-    private void Init()
+    private void ResetPlayer()
     {
-        StartListening();
+        transform.position = playerStartPos;
         SetColor(ColorEnum.Yellow);
     }
 
+    #region GameFlow
+    public void StartGame()
+    {
+        if (faceController)
+        {
+            faceController.Event.StartListening((int)FaceEvent.MouthOpen, SetNextColor);
+
+            faceController.Event.StartListening((int)FaceEvent.LeftEyeClose, LeftMove);
+            faceController.Event.StartListening((int)FaceEvent.LeftEyeOpen, StopLeftMove);
+            faceController.Event.StartListening((int)FaceEvent.RightEyeClose, RightMove);
+            faceController.Event.StartListening((int)FaceEvent.RightEyeOpen, StopRightMove);
+        }
+
+        ResetPlayer();
+    }
+    public void StopGame()
+    {
+        ResetPlayer();
+        if (faceController)
+        {
+            faceController.Event.StopListening((int)FaceEvent.MouthOpen, SetNextColor);
+
+            faceController.Event.StopListening((int)FaceEvent.LeftEyeClose, LeftMove);
+            faceController.Event.StopListening((int)FaceEvent.LeftEyeOpen, StopLeftMove);
+            faceController.Event.StopListening((int)FaceEvent.RightEyeClose, RightMove);
+            faceController.Event.StopListening((int)FaceEvent.RightEyeOpen, StopRightMove);
+        }
+    }
+    #endregion
+
     #region Move
+    private void LeftMove()
+    {
+        leftMove = true;
+    }
+    private void StopLeftMove()
+    {
+        leftMove = false;
+    }
+    private void RightMove()
+    {
+        rightMove = true;
+    }
+    private void StopRightMove()
+    {
+        rightMove = false;
+    }
 
     private void Move()
     {
-        if (Input.GetKey(KeyCode.A)) transform.Translate(Vector3.forward * speed * Time.deltaTime);
-        else if (Input.GetKey(KeyCode.D)) transform.Translate(Vector3.back * speed * Time.deltaTime);
+        if (leftMove) transform.Translate(Vector3.forward * speed * Time.deltaTime);
+        else if (rightMove) transform.Translate(Vector3.back * speed * Time.deltaTime);
 
         Wall();
     }
-
     private void Wall()
     {
         Vector3 pos = Camera.main.WorldToViewportPoint(transform.position);
@@ -129,7 +106,6 @@ public class SwitchColor : MonoBehaviour
         if (pos.x > 1f) pos.x = 1f;
         transform.position = Camera.main.ViewportToWorldPoint(pos);
     }
-
     #endregion
 
     #region Color
@@ -149,7 +125,6 @@ public class SwitchColor : MonoBehaviour
 
         SetColor((ColorEnum)index);
     }
-
     #endregion
 
     #region Trigger()
@@ -195,49 +170,19 @@ public class SwitchColor : MonoBehaviour
 
     #endregion
 
-    #endregion 
-    #region Score
-
-    private void ScoreTime()
-    {
-        score = 0;
-        StartCoroutine(ScoreUP());
-    }
-
-    private IEnumerator ScoreUP()
-    {
-        while (isGame)
-        {
-            yield return new WaitForSeconds(1f);
-
-            score += 1;
-            if (score % 20 == 0) LevelUP();
-
-            UpdateScoreUI();
-        }
-    }
-
-    private void UpdateScoreUI()
-    {
-        scoreText.SetText(score.ToString());
-    }
-
-    private void GameOverUI()
-    {
-        gameOverScoreText.SetText(score.ToString());
-        gameOverPanel.SetActive(true);
-
-        Time.timeScale = 0f;
-    }
-
-    #endregion
-
     #region Event
 
     private void StartListening()
     {
         EventManager.StartListening(EventName.OnMiniGameOver, StopGame);
         EventManager.StartListening(EventName.OnMiniGameStart, StartGame);
+    }
+    
+
+    private void StopListening()
+    {
+        EventManager.StopListening(EventName.OnMiniGameOver, StopGame);
+        EventManager.StopListening(EventName.OnMiniGameStart, StartGame);
     }
 
     #endregion
@@ -247,10 +192,14 @@ public class SwitchColor : MonoBehaviour
         if (faceController)
         {
             faceController.Event.StopListening((int)FaceEvent.MouthOpen, SetNextColor);
+
+            faceController.Event.StopListening((int)FaceEvent.LeftEyeClose, LeftMove);
+            faceController.Event.StopListening((int)FaceEvent.LeftEyeOpen, StopLeftMove);
+            faceController.Event.StopListening((int)FaceEvent.RightEyeClose, RightMove);
+            faceController.Event.StopListening((int)FaceEvent.RightEyeOpen, StopRightMove);
         }
 
-        EventManager.StopListening(EventName.OnMiniGameOver, StopGame);
-        EventManager.StopListening(EventName.OnMiniGameStart, StartGame);
+        StopListening();
     }
 
 }
