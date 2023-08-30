@@ -16,29 +16,42 @@ public class TeachersBackTeacher : MonoBehaviour
     private void Awake()
     {
         anim = GetComponent<Animator>();
+
+        StartListening();
     }
 
-    public void Init()
+    private void StartGame()
     {
+        EventManager<TeachersBackPlayer>.StartListening(EventName.OnMiniGameActionFailed, Scold);
+        
         StopAllCoroutines();
         anim.SetBool("Scold", false);
         transform.eulerAngles = new Vector3(0, 0, 0);
         IdleState();
     }
-    public void StopPlay()
+    private void StopGame()
     {
+        EventManager<TeachersBackPlayer>.StopListening(EventName.OnMiniGameActionFailed, Scold);
+     
         StopAllCoroutines();
         anim.SetBool("Finding", false);
         teacherState = TeachersBackTeacherState.None;
     }
     #region State
 
-    public void Scold()
+    private void Scold(TeachersBackPlayer player)
     {
         teacherState = TeachersBackTeacherState.SCOLD;
 
         transform.eulerAngles = new Vector3(0, 100, 0);
         anim.SetBool("Scold", true);
+
+        StartCoroutine(GameOverDelay());
+    }
+    private IEnumerator GameOverDelay()
+    {
+        yield return new WaitForSeconds(2f);
+        EventManager.TriggerEvent(EventName.OnMiniGameOver);
     }
     
     private void IdleState()
@@ -65,7 +78,6 @@ public class TeachersBackTeacher : MonoBehaviour
     {
         teacherState = TeachersBackTeacherState.FINDING;
         float randomWaitTime = Random.Range(1f, maxIdleWaitTime);
-        EventManager<bool>.TriggerEvent(EventName.OnTeacherFinding, true);
 
         anim.SetBool("Finding", true);
         yield return new WaitForSeconds(randomWaitTime);
@@ -73,4 +85,25 @@ public class TeachersBackTeacher : MonoBehaviour
     }
 
     #endregion
+
+    #region Event
+
+    private void StartListening()
+    {
+        EventManager.StartListening(EventName.OnMiniGameStart, StartGame);
+        EventManager.StartListening(EventName.OnMiniGameOver, StopGame);
+    }
+
+    private void StopListening()
+    {
+        EventManager.StopListening(EventName.OnMiniGameStart, StartGame);
+        EventManager.StopListening(EventName.OnMiniGameOver, StopGame);
+    }
+
+    #endregion 
+
+    private void OnDestroy()
+    {
+        StopListening();
+    }
 }

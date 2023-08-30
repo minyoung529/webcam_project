@@ -138,9 +138,6 @@ public enum EventName
     OnVideoLoadComplete,
     OnSetTextureURL,
 
-    OnTeacherFinding,
-    OnStudentEating,
-
     OnMiniGameStart,
     OnMiniGameStop,
     OnMiniGameOver,

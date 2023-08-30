@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
-using UnityEngine.SocialPlatforms.Impl;
 using UnityEngine.UI;
 
 public class TeachersBackManager : MonoBehaviour
@@ -9,63 +9,135 @@ public class TeachersBackManager : MonoBehaviour
     [SerializeField] private TeachersBackPlayer player;
     [SerializeField] private TeachersBackTeacher teacher;
 
+    [SerializeField] private Slider scoreSlider;
+    [SerializeField] private TextMeshProUGUI countText;
     [SerializeField] private CanvasGroup failMenu;
 
+    private float FullSnackCount = 10;
+    private int snackCount = 0;
+    public int SnackCount { get { return snackCount; } set { snackCount = value; UpdateCountText(); } }
+    private float addValue => (1f / FullSnackCount);
+
+
+    public void OnGameStart()
+    {
+        EventManager.TriggerEvent(EventName.OnMiniGameStart);
+    }
 
     private void Start()
     {
-        StartGame();
+        StartListening();
+        OnGameStart();
     }
 
-    public void StartGame()
+    private void Update()
     {
-        Init();
-    }
-
-    private void Init()
-    {
-        failMenu.alpha = 0.0f;
-        failMenu.gameObject.SetActive(false);
-
-        EventManager<bool>.StartListening(EventName.OnTeacherFinding, CheckPlayerEating);
-        EventManager<bool>.StartListening(EventName.OnStudentEating, CheckPlayerEating);
-        EventManager.StartListening(EventName.OnMiniGameOver, Fail);
-
-        player.Init();
-        teacher.Init();
-    }
-
-    private void CheckPlayerEating(bool value)
-    {
-        if(teacher.TeacherState == TeachersBackTeacherState.FINDING)
+        if (scoreSlider.IsActive())
         {
-            if (player.PlayerState == TeachersBackPlayerState.EAT) Fail();
+            SliderValue();
+            CheckSlider();
+            CheckPlayerEating();
         }
     }
 
-    private void Fail()
+    private void CheckPlayerEating()
     {
-        player.ChangeState(TeachersBackPlayerState.FAIL);
-        teacher.Scold();
-
-        StartCoroutine(StopGame());
+        if (teacher.TeacherState == TeachersBackTeacherState.FINDING)
+        {
+            if (player.PlayerState == TeachersBackPlayerState.EAT) EventManager<TeachersBackPlayer>.TriggerEvent(EventName.OnMiniGameActionFailed, player);
+        }
     }
-    
-    private IEnumerator StopGame()
-    {
-        yield return new WaitForSeconds(3f);
-        teacher.StopPlay();
-        player.StopPlay();
 
-        failMenu.alpha= 1.0f;
+    #region Game Flow
+
+    private void StartGame()
+    {
+        ActiveUI();
+        SnackCount = 0;
+
+        failMenu.alpha = 0.0f;
+        failMenu.gameObject.SetActive(false);
+    }
+
+    private void StopGame()
+    {
+        InactiveUI();
+
+        failMenu.alpha = 1.0f;
         failMenu.gameObject.SetActive(true);
     }
 
+    #endregion
+
+    #region UI
+
+    private void SliderValue()
+    {
+        float value = scoreSlider.value - addValue;
+        if (player.PlayerState == TeachersBackPlayerState.EAT)
+        {
+            value = scoreSlider.value + addValue;
+        }
+
+        scoreSlider.value = Mathf.Lerp(scoreSlider.value, value, Time.deltaTime);
+    }
+
+    private void CheckSlider()
+    {
+        if (scoreSlider.value >= scoreSlider.maxValue)
+        {
+            UpgradeLevel();
+        }
+        else if (scoreSlider.value <= 0f)
+        {
+            EventManager.TriggerEvent(EventName.OnMiniGameOver);
+            return;
+        }
+    }
+
+    private void UpgradeLevel()
+    {
+        SnackCount++;
+        FullSnackCount *= 2;
+        scoreSlider.value = 0.5f;
+    }
+    private void UpdateCountText()
+    {
+        countText.SetText(snackCount.ToString());
+    }
+
+    private void ActiveUI()
+    {
+        countText.gameObject.SetActive(true);
+        scoreSlider.gameObject.SetActive(true);
+    }
+    private void InactiveUI()
+    {
+        countText.gameObject.SetActive(false);
+        scoreSlider.gameObject.SetActive(false);
+    }
+
+    #endregion
+
+    #region Event
+
+    private void StartListening()
+    {
+        EventManager.StartListening(EventName.OnMiniGameStart, StartGame);
+        EventManager.StartListening(EventName.OnMiniGameOver, StopGame);
+    }
+
+    private void StopListening()
+    {
+        EventManager.StopListening(EventName.OnMiniGameStart, StartGame);
+        EventManager.StopListening(EventName.OnMiniGameOver, StopGame);
+    }
+
+    #endregion
+
     private void OnDestroy()
     {
-        EventManager<bool>.StopListening(EventName.OnTeacherFinding, CheckPlayerEating);
-        EventManager<bool>.StopListening(EventName.OnStudentEating, CheckPlayerEating);
-        EventManager.StopListening(EventName.OnMiniGameOver, Fail);
+        StopListening();
     }
 }
 
