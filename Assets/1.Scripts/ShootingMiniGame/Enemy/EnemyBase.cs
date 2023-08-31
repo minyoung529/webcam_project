@@ -3,35 +3,22 @@ using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
 
+interface Shootable
+{
+    abstract void InstantiateBullet();
+    abstract void GetFireTransform();
+    abstract void GetBullet();
+}
 public class EnemyBase : MonoBehaviour
 {
     [SerializeField]
-    private EnemyStat enemyStat = new EnemyStat();
+    protected EnemyStat enemyStat = new EnemyStat();
     [SerializeField]
-    private Transform pos;
-    [SerializeField]
-    private Transform[] posArr;
-    [SerializeField]
-    private PathMode pathMode;
+    protected PathMode pathMode;
 
-    /// <summary>
-    /// ex
-    /// </summary>
-    //private void Update()
-    //{
-    //    if (Input.GetKeyDown(KeyCode.Escape))
-    //        MovePosition(pos.position);
-    //    if (Input.GetKeyDown(KeyCode.G))
-    //    {
-    //        Vector3[] curSetV3 = new Vector3[posArr.Length];
-    //        for (int i = 0; i < posArr.Length; i++)
-    //        {
-    //            curSetV3[i] = posArr[i].position;
-    //        }
-    //        MovePositions(curSetV3);
-    //    }
-    //}
-    private void ResetTurn()
+    protected Transform[] posArr;
+
+    protected void ResetTurn()
     {
         transform.DORotate(Vector3.zero, 0.1f);
     }

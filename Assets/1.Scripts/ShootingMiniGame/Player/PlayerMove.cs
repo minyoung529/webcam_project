@@ -55,6 +55,5 @@ public class PlayerMove : MonoBehaviour
         {
             animator.SetBool(isMove, true);
         }
-
     }
 }
