@@ -274,10 +274,17 @@ namespace DlibFaceLandmarkDetectorExample
             texture = new Texture2D(webCamTextureMat.cols(), webCamTextureMat.rows(), TextureFormat.RGBA32, false);
             Utils.fastMatToTexture2D(webCamTextureMat, texture);
 
-            gameObject.GetComponent<Renderer>().material.mainTexture = texture;
+            if (gameObject.GetComponent<Renderer>())
+            {
+                gameObject.GetComponent<Renderer>().material.mainTexture = texture;
+            }
+            else
+            {
+                gameObject.GetComponent<Image>().material.mainTexture = texture;
+            }
 
-            gameObject.transform.localScale = new Vector3(webCamTextureMat.cols(), webCamTextureMat.rows(), 1);
-            Debug.Log("Screen.width " + Screen.width + " Screen.height " + Screen.height + " Screen.orientation " + Screen.orientation);
+            //gameObject.transform.localScale = new Vector3(webCamTextureMat.cols(), webCamTextureMat.rows(), 1);
+            //Debug.Log("Screen.width " + Screen.width + " Screen.height " + Screen.height + " Screen.orientation " + Screen.orientation);
 
             float width = webCamTextureMat.width();
             float height = webCamTextureMat.height();
@@ -285,15 +292,15 @@ namespace DlibFaceLandmarkDetectorExample
             float imageSizeScale = 1.0f;
             float widthScale = (float)Screen.width / width;
             float heightScale = (float)Screen.height / height;
-            if (widthScale < heightScale)
-            {
-                Camera.main.orthographicSize = (width * (float)Screen.height / (float)Screen.width) / 2;
-                imageSizeScale = (float)Screen.height / (float)Screen.width;
-            }
-            else
-            {
-                Camera.main.orthographicSize = height / 2;
-            }
+            //if (widthScale < heightScale)
+            //{
+            //    Camera.main.orthographicSize = (width * (float)Screen.height / (float)Screen.width) / 2;
+            //    imageSizeScale = (float)Screen.height / (float)Screen.width;
+            //}
+            //else
+            //{
+            //    Camera.main.orthographicSize = height / 2;
+            //}
 
 
             //set cameraparam
@@ -562,7 +569,11 @@ namespace DlibFaceLandmarkDetectorExample
                     {
                         rvec = new Mat(3, 1, CvType.CV_64FC1);
                         tvec = new Mat(3, 1, CvType.CV_64FC1);
-                        Calib3d.solvePnP(objectPoints, imagePoints, camMatrix, distCoeffs, rvec, tvec);
+
+                        if (camMatrix != null && objectPoints == null)
+                        {
+                            Calib3d.solvePnP(objectPoints, imagePoints, camMatrix, distCoeffs, rvec, tvec);
+                        }
                     }
 
 
@@ -662,6 +673,9 @@ namespace DlibFaceLandmarkDetectorExample
                     }
                 }
                 //Imgproc.putText (rgbaMat, "W:" + rgbaMat.width () + " H:" + rgbaMat.height () + " SO:" + Screen.orientation, new Point (5, rgbaMat.rows () - 10), Imgproc.FONT_HERSHEY_SIMPLEX, 0.5, new Scalar (255, 255, 255, 255), 1, Imgproc.LINE_AA, false);
+
+                if (rgbaMat == null || texture == null)
+                    return;
 
                 Utils.fastMatToTexture2D(rgbaMat, texture);
             }
