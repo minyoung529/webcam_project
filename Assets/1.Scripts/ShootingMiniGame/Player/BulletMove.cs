@@ -38,7 +38,12 @@ public class BulletMove : MonoBehaviour
         if (isPlayer)
         {
             if (other.gameObject.CompareTag("Enemy"))
+            {
                 PoolManager.Instance.Push(gameObject);
+                EnemyBase enemy = null;
+                if (other.TryGetComponent<EnemyBase>(out enemy))
+                    enemy.GetAttack();
+            }
             return;
         }
         if (other.gameObject.CompareTag("Player"))
