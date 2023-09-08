@@ -137,7 +137,10 @@ public class Penguin : MonoBehaviour
     private void Release()
     {
         if (!isRelease)
+        {
+            isRelease = true;
             ReleaseAction?.Invoke(this);
+        }
     }
 
     public void OnCreated()
@@ -160,6 +163,7 @@ public class Penguin : MonoBehaviour
     public void OnRelease()
     {
         isRelease = true;
+        EventManager<Penguin>.StopListening(EventName.OnMiniGameActionStarted, OnBubblePop);
         gameObject.SetActive(false);
     }
 

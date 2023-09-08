@@ -44,6 +44,18 @@ public class PenguinGenerator : MonoBehaviour
 
     private void OnPenguinInstalled(Penguin penguin)
     {
+        Debug.Log("Spawn After Installed");
+        Spawn();
+    }
+
+    private void DelayOneFrameSpawn()
+    {
+        StartCoroutine(DelaySpawn());
+    }
+
+    private IEnumerator DelaySpawn()
+    {
+        yield return null;
         Spawn();
     }
 
@@ -62,7 +74,7 @@ public class PenguinGenerator : MonoBehaviour
     private void GameStart()
     {
         prevPenguin = startPenguin;
-        Spawn();
+        DelayOneFrameSpawn();
     }
 
     private void GameStop()
