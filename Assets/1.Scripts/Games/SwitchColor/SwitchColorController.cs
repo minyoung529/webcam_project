@@ -4,8 +4,9 @@ using UnityEngine;
 
 public class SwitchColorController : MonoBehaviour
 {
-    [SerializeField] float floorSpeed = 10f;
     [SerializeField] FloorBlock[] floors;
+
+    private float[] zPos = { 30, 5, -20, -45 };
 
     private int score = 0;
     private int level = 1;
@@ -23,7 +24,6 @@ public class SwitchColorController : MonoBehaviour
     private void Start()
     {
         StartListening();
-        OnGameStart();
     }
 
     public void OnGameStart()
@@ -31,20 +31,23 @@ public class SwitchColorController : MonoBehaviour
         EventManager.TriggerEvent(EventName.OnMiniGameStart);
     }
 
-    private void StartGame()
+    private void GameStart()
     {
+        if (isGame) return;
+        UI.OffGameOverUI();
+
         for (int i = 0; i < floors.Length; i++)
         {
-            floors[i].SetSpeed(floorSpeed);
+            Vector3 pos = new Vector3(0, -20, zPos[i]);
+            floors[i].transform.position = pos;
         }
 
         isGame = true;
         level = 1;
-
         ScoreTime();
     }
 
-    private void StopGame()
+    private void GameOver()
     {
         if (!isGame) return;
 
@@ -59,7 +62,7 @@ public class SwitchColorController : MonoBehaviour
         level += 1;
         for (int i = 0; i < floors.Length; i++)
         {
-            floors[i].SetSpeed(floorSpeed * level);
+            floors[i].SetSpeed(floors[i].Speed * level);
         }
     }
 
@@ -89,16 +92,16 @@ public class SwitchColorController : MonoBehaviour
 
     private void StartListening()
     {
-        EventManager.StartListening(EventName.OnMiniGameOver, StopGame);
-        EventManager.StartListening(EventName.OnMiniGameStart, StartGame);
+        EventManager.StartListening(EventName.OnMiniGameStart, GameStart);
+        EventManager.StartListening(EventName.OnMiniGameOver, GameOver);
 
     }
-    
+
 
     private void StopListening()
     {
-        EventManager.StopListening(EventName.OnMiniGameOver, StopGame);
-        EventManager.StopListening(EventName.OnMiniGameStart, StartGame);
+        EventManager.StopListening(EventName.OnMiniGameStart, GameStart);
+        EventManager.StopListening(EventName.OnMiniGameOver, GameOver);
     }
 
     #endregion

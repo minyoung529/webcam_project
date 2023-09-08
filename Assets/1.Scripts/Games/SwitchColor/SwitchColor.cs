@@ -25,7 +25,6 @@ public class SwitchColor : MonoBehaviour
         playerStartPos = transform.position;
 
         StartListening();
-        StartGame();
     }
 
     private void Update()
@@ -45,7 +44,7 @@ public class SwitchColor : MonoBehaviour
     }
 
     #region GameFlow
-    public void StartGame()
+    public void GameStart()
     {
         if (faceController)
         {
@@ -59,9 +58,8 @@ public class SwitchColor : MonoBehaviour
 
         ResetPlayer();
     }
-    public void StopGame()
+    public void GameOver()
     {
-        ResetPlayer();
         if (faceController)
         {
             faceController.Event.StopListening((int)FaceEvent.MouthOpen, SetNextColor);
@@ -71,6 +69,7 @@ public class SwitchColor : MonoBehaviour
             faceController.Event.StopListening((int)FaceEvent.RightEyeClose, RightMove);
             faceController.Event.StopListening((int)FaceEvent.RightEyeOpen, StopRightMove);
         }
+        ResetPlayer();
     }
     #endregion
 
@@ -164,8 +163,8 @@ public class SwitchColor : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        FloorBlock floor = collision.collider.GetComponent<FloorBlock>();
-        TriggerPlayer(floor);
+        FloorBlock floor = collision.collider?.GetComponent<FloorBlock>();
+       if(floor !=null)  TriggerPlayer(floor);
     }
 
     #endregion
@@ -174,15 +173,15 @@ public class SwitchColor : MonoBehaviour
 
     private void StartListening()
     {
-        EventManager.StartListening(EventName.OnMiniGameOver, StopGame);
-        EventManager.StartListening(EventName.OnMiniGameStart, StartGame);
+        EventManager.StartListening(EventName.OnMiniGameStart, GameStart);
+        EventManager.StartListening(EventName.OnMiniGameOver, GameOver);
     }
     
 
     private void StopListening()
     {
-        EventManager.StopListening(EventName.OnMiniGameOver, StopGame);
-        EventManager.StopListening(EventName.OnMiniGameStart, StartGame);
+        EventManager.StopListening(EventName.OnMiniGameStart, GameStart);
+        EventManager.StopListening(EventName.OnMiniGameOver, GameOver);
     }
 
     #endregion

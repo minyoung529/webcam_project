@@ -22,7 +22,7 @@ public class TeachersBackPlayer : MonoBehaviour
 
     #region Game Flow
 
-    private void StartGame()
+    private void GameStart()
     {
         EventManager<TeachersBackPlayer>.StartListening(EventName.OnMiniGameActionFailed, Fail);
         anim.SetBool("Eating", false);
@@ -41,7 +41,7 @@ public class TeachersBackPlayer : MonoBehaviour
 
         ChangeState(TeachersBackPlayerState.None);
     }
-    private void StopGame()
+    private void GameOver()
     {
         EventManager<TeachersBackPlayer>.StopListening(EventName.OnMiniGameActionFailed, Fail);
         anim.SetBool("Eating", false);
@@ -105,14 +105,14 @@ public class TeachersBackPlayer : MonoBehaviour
 
     private void StartListening()
     {
-        EventManager.StartListening(EventName.OnMiniGameStart, StartGame);
-        EventManager.StartListening(EventName.OnMiniGameOver, StopGame);
+        EventManager.StartListening(EventName.OnMiniGameStart, GameStart);
+        EventManager.StartListening(EventName.OnMiniGameOver, GameOver);
     }
 
     private void StopListening()
     {
-        EventManager.StopListening(EventName.OnMiniGameStart, StartGame);
-        EventManager.StopListening(EventName.OnMiniGameOver, StopGame);
+        EventManager.StopListening(EventName.OnMiniGameStart, GameStart);
+        EventManager.StopListening(EventName.OnMiniGameOver, GameOver);
     }
 
     #endregion 

@@ -50,7 +50,7 @@ public class TeachersBackManager : MonoBehaviour
 
     #region Game Flow
 
-    private void StartGame()
+    private void GameStart()
     {
         ActiveUI();
         SnackCount = 0;
@@ -59,7 +59,7 @@ public class TeachersBackManager : MonoBehaviour
         failMenu.gameObject.SetActive(false);
     }
 
-    private void StopGame()
+    private void GameOver()
     {
         InactiveUI();
 
@@ -123,14 +123,14 @@ public class TeachersBackManager : MonoBehaviour
 
     private void StartListening()
     {
-        EventManager.StartListening(EventName.OnMiniGameStart, StartGame);
-        EventManager.StartListening(EventName.OnMiniGameOver, StopGame);
+        EventManager.StartListening(EventName.OnMiniGameStart, GameStart);
+        EventManager.StartListening(EventName.OnMiniGameOver, GameOver);
     }
 
     private void StopListening()
     {
-        EventManager.StopListening(EventName.OnMiniGameStart, StartGame);
-        EventManager.StopListening(EventName.OnMiniGameOver, StopGame);
+        EventManager.StopListening(EventName.OnMiniGameStart, GameStart);
+        EventManager.StopListening(EventName.OnMiniGameOver, GameOver);
     }
 
     #endregion

@@ -21,8 +21,6 @@ public class SwitchColorUI : MonoBehaviour
     {
         gameOverScoreText.SetText(score.ToString());
         gameOverPanel.SetActive(true);
-
-        Time.timeScale = 0f;
     }
 
     public void OffGameOverUI()
