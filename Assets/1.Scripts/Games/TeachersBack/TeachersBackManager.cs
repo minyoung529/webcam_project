@@ -17,6 +17,8 @@ public class TeachersBackManager : MonoBehaviour
     private int snackCount = 0;
     public int SnackCount { get { return snackCount; } set { snackCount = value; UpdateCountText(); } }
     private float addValue => (1f / FullSnackCount);
+    private float speed = 2f;
+    private float minusSpeed = 0.1f;
 
 
     public void OnGameStart()
@@ -73,10 +75,10 @@ public class TeachersBackManager : MonoBehaviour
 
     private void SliderValue()
     {
-        float value = scoreSlider.value - addValue;
+        float value = (scoreSlider.value - addValue*minusSpeed);
         if (player.PlayerState == TeachersBackPlayerState.EAT)
         {
-            value = scoreSlider.value + addValue;
+            value = (scoreSlider.value + (addValue*speed));
         }
 
         scoreSlider.value = Mathf.Lerp(scoreSlider.value, value, Time.deltaTime);
@@ -99,6 +101,7 @@ public class TeachersBackManager : MonoBehaviour
     {
         SnackCount++;
         FullSnackCount *= 2;
+        minusSpeed += 0.2f;
         scoreSlider.value = 0.5f;
     }
     private void UpdateCountText()

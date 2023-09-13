@@ -1,3 +1,4 @@
+using DG.Tweening;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -5,12 +6,15 @@ using UnityEngine.UIElements;
 
 public class TeachersBackTeacher : MonoBehaviour
 {
+    [SerializeField] SpriteRenderer warningEffect;
+
     private TeachersBackTeacherState teacherState;
     public TeachersBackTeacherState TeacherState => teacherState;
 
     private float maxFindingWaitTime = 10f;
     private float maxIdleWaitTime = 5f;
 
+    private Vector3 warningScale= new Vector3(1f, 1f, 1f);
     private Animator anim;
 
     private void Awake()
@@ -64,9 +68,16 @@ public class TeachersBackTeacher : MonoBehaviour
 
     private IEnumerator Idle()
     {
-        float randomWaitTime = Random.Range(1f, maxFindingWaitTime);
-        yield return new WaitForSeconds(randomWaitTime);
-        FindState();
+        float randomWaitTime = Random.Range(2f, maxFindingWaitTime);
+        if(maxFindingWaitTime >= 4f)  maxFindingWaitTime -= 0.05f;
+        yield return new WaitForSeconds(randomWaitTime - 1.5f);
+        warningEffect.transform.DOScale(warningScale, 1f).OnComplete(()=>
+        {
+            warningEffect.transform.DOScale(new Vector3(0, 0, 0), 0.5f).OnComplete(()=>
+           {
+                FindState();
+           });
+        });
     }
 
     private void FindState()
