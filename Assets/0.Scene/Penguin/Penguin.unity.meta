@@ -1,5 +1,9 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:Assets/0.Scene/ShootingMiniGameTestScene.unity.meta
+guid: 95bf9c15e9d78db488d41631ff418aac
+========
 guid: 50e457e7ff524604695ad80cb6658017
+>>>>>>>> main:Assets/0.Scene/Penguin/Penguin.unity.meta
 DefaultImporter:
   externalObjects: {}
   userData: 

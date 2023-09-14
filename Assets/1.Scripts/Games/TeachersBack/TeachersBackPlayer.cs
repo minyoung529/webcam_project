@@ -1,63 +1,38 @@
-using DG.Tweening;
-using Newtonsoft.Json.Serialization;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class TeachersBackPlayer : MonoBehaviour
 {
+    private Animator anim;
+    private FaceController faceController;
+
     private TeachersBackPlayerState playerState = TeachersBackPlayerState.None;
     public TeachersBackPlayerState PlayerState => playerState;
 
-    [SerializeField] private Slider scoreSlider;
-    [SerializeField] private TextMeshProUGUI countText;
-    private Animator anim;
-
-    private bool inputLock = true;
-    private float FullSnackCount = 10;
-    private int snackCount = 0;
-    public int SnackCount { get { return snackCount; } set { snackCount = value; UpdateCountText(); } }
-    private float addValue => (1f / FullSnackCount);
-
     private Dictionary<TeachersBackPlayerState, Action> stateAction = new Dictionary<TeachersBackPlayerState, Action>();
 
-    private void Awake()
+    private void Start()
     {
         anim = GetComponent<Animator>();
+        faceController = FindObjectOfType<FaceController>();
+
+        StartListening();
     }
-
-    private void Update()
-    {
-        if (!inputLock)
-        {
-            if (Input.GetKeyDown(KeyCode.Space))
-            {
-                ChangeState(TeachersBackPlayerState.EAT);
-            }
-            else if (Input.GetKeyUp(KeyCode.Space))
-            {
-                StopAllCoroutines();
-                ChangeState(TeachersBackPlayerState.None);
-            }
-        }
-
-        if (scoreSlider.IsActive())
-        {
-            SliderValue();
-            CheckSlider();
-        }
-    }
-
 
     #region Game Flow
-    public void Init()
+
+    private void GameStart()
     {
-        SnackCount = 0;
-        scoreSlider.value = 0.5f;
-        ActiveUI();
+        EventManager<TeachersBackPlayer>.StartListening(EventName.OnMiniGameActionFailed, Fail);
+        anim.SetBool("Eating", false);
+        anim.SetBool("Fail", false);
+
+        if (faceController)
+        {
+            faceController.Event.StartListening((int)FaceEvent.MouthOpen, StartEat);
+            faceController.Event.StartListening((int)FaceEvent.MouthClose, StopEat);
+        }
 
         stateAction.Clear();
         stateAction.Add(TeachersBackPlayerState.None, IdleState);
@@ -66,25 +41,43 @@ public class TeachersBackPlayer : MonoBehaviour
 
         ChangeState(TeachersBackPlayerState.None);
     }
-
-    public void StopPlay()
+    private void GameOver()
     {
+        EventManager<TeachersBackPlayer>.StopListening(EventName.OnMiniGameActionFailed, Fail);
         anim.SetBool("Eating", false);
-    }
 
-    private void UpgradeLevel()
-    {
-        Debug.Log("Upgrade");
-        SnackCount++;
-        FullSnackCount *= 2;
-        scoreSlider.value = 0.5f;
+        if (faceController)
+        {
+            faceController.Event.StopListening((int)FaceEvent.MouthOpen, StartEat);
+            faceController.Event.StopListening((int)FaceEvent.MouthClose, StopEat);
+        }
+
+        ChangeState(TeachersBackPlayerState.FAIL);
     }
 
     #endregion
 
     #region State Function
+    private void StartEat()
+    {
+        ChangeState(TeachersBackPlayerState.EAT);
+    }
+    private void StopEat()
+    {
+        ChangeState(TeachersBackPlayerState.None);
+    }
+    private void Fail(TeachersBackPlayer player)
+    {
+        ChangeState(TeachersBackPlayerState.FAIL);
 
-    public void ChangeState(TeachersBackPlayerState changeState)
+        if (faceController)
+        {
+            faceController.Event.StopListening((int)FaceEvent.MouthOpen, StartEat);
+            faceController.Event.StopListening((int)FaceEvent.MouthClose, StopEat);
+        }
+    }
+
+    private void ChangeState(TeachersBackPlayerState changeState)
     {
         playerState = changeState;
         if (stateAction.ContainsKey(changeState))
@@ -95,69 +88,42 @@ public class TeachersBackPlayer : MonoBehaviour
 
     private void IdleState()
     {
-        inputLock = false;
         anim.SetBool("Eating", false);
     }
-
     private void EatState()
     {
-        EventManager<bool>.TriggerEvent(EventName.OnStudentEating, true);
         anim.SetBool("Eating", true);
     }
-
     private void FailState()
     {
-        InactiveUI();
-        inputLock = true;
-        anim.SetTrigger("Fail");
+        anim.SetBool("Fail", true);
     }
+    
     #endregion
 
-    #region UI
+    #region Event
 
-    #region Slider
-
-    private void SliderValue()
+    private void StartListening()
     {
-        float value = scoreSlider.value - addValue;
-        if (playerState == TeachersBackPlayerState.EAT)
+        EventManager.StartListening(EventName.OnMiniGameStart, GameStart);
+        EventManager.StartListening(EventName.OnMiniGameOver, GameOver);
+    }
+
+    private void StopListening()
+    {
+        EventManager.StopListening(EventName.OnMiniGameStart, GameStart);
+        EventManager.StopListening(EventName.OnMiniGameOver, GameOver);
+    }
+
+    #endregion 
+
+    private void OnDestroy()
+    {
+        if (faceController)
         {
-            value = scoreSlider.value + addValue;
+            faceController.Event.StartListening((int)FaceEvent.MouthOpen, StartEat);
+            faceController.Event.StartListening((int)FaceEvent.MouthClose, StopEat);
         }
-
-        scoreSlider.value = Mathf.Lerp(scoreSlider.value, value, Time.deltaTime);
+        StopListening();
     }
-
-    private void CheckSlider()
-    {
-        if (scoreSlider.value >= scoreSlider.maxValue)
-        {
-            UpgradeLevel();
-        }
-        else if (scoreSlider.value <= 0f)
-        {
-            EventManager<bool>.TriggerEvent(EventName.OnTeachersBackFail, true);
-            return;
-        }
-    }
-
-    #endregion
-
-    private void UpdateCountText()
-    {
-        countText.SetText(snackCount.ToString());
-    }
-
-    private void ActiveUI()
-    {
-        countText.gameObject.SetActive(true);
-        scoreSlider.gameObject.SetActive(true);
-    }
-    private void InactiveUI()
-    {
-        countText.gameObject.SetActive(false);
-        scoreSlider.gameObject.SetActive(false);
-    }
-
-    #endregion
 }
