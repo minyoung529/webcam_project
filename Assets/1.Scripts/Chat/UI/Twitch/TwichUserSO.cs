@@ -47,6 +47,7 @@ public struct User
 public class TwichUserSO : ScriptableObject
 {
     public List<Color> colors = new();
+    public List<Sprite> icons = new();
     public List<User> users = new List<User>();
     public List<string> userRandomName = new List<string>();
     public List<string> userRandomEngName = new List<string>();
