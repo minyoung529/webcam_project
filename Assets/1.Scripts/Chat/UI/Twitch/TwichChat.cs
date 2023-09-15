@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -8,9 +9,11 @@ public class TwichChat : MonoBehaviour
     [SerializeField]
     private Image badgeImage;
     [SerializeField]
-    private Text userNameText;
+    private Image badgeBackgroundImage;
     [SerializeField]
-    private Text chattingText;
+    private TMP_Text userNameText;
+    [SerializeField]
+    private TMP_Text chattingText;
     private User user;
 
     public void InitChat(Sprite curBadgeImage, Color color)
@@ -22,6 +25,11 @@ public class TwichChat : MonoBehaviour
 
         userNameText.text = $"{user.userName} {user.userEngName}";
         userNameText.color = color;
+
+        if (user.badge == UserBadgeType.Manager)
+            badgeBackgroundImage.color = new Color(14, 184, 100);
+        if (user.badge == UserBadgeType.Bot)
+            badgeBackgroundImage.color = Color.red;
     }
     public void ShowChat(string chat)
     {

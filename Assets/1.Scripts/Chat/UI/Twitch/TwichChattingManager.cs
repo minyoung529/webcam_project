@@ -9,8 +9,18 @@ public class TwichChattingManager : MonoBehaviour
     private void Awake()
     {
         InitUser();
+        CreateUser();
     }
 
+    private void CreateUser()
+    {
+        for (int i = 0; i < twichUserSO.users.Count; i++)
+        {
+            TwichChat item = PoolManager.Instance.GetPoolObject("TwichBubble").GetComponent<TwichChat>();
+            item.User = twichUserSO.users[i];
+            item.InitChat(twichUserSO.icons[(int)item.User.badge], twichUserSO.colors[(int)item.User.color]);
+        }
+    }
     private void InitUser()
     {
         List<string> userNameRan = new List<string>(twichUserSO.userRandomName);
@@ -28,17 +38,4 @@ public class TwichChattingManager : MonoBehaviour
             twichUserSO.users.Add(newUser);
         }
     }
-    public Color GetUserColor(UserColor curColor) => curColor switch
-    {
-        UserColor.Orange => new Color(218,28,79),
-        UserColor.Red => new Color(231, 0, 0),
-        UserColor.Apricot => new Color(222, 132, 84),
-        UserColor.ReddishBrown => new Color(166, 72, 62),
-        UserColor.Blue => new Color(37, 161, 202),
-        UserColor.Pink => new Color(255, 85, 106),
-        UserColor.skyblue => new Color(108, 193, 185),
-        UserColor.Purple => new Color(127, 66, 166),
-        UserColor.BlueGrey => new Color(73, 77, 109),
-        _ => Color.white
-    };
 }
