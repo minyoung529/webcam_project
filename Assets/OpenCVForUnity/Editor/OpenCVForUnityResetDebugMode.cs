@@ -13,7 +13,7 @@ namespace OpenCVForUnity.Editor
         static void InitializeOnEnterPlayMode()
         {
 
-            Utils.setDebugMode(false);
+         //   Utils.setDebugMode(false);
 
         }
     }

@@ -10,6 +10,7 @@ public class FloorBlock : MonoBehaviour
     public MeshRenderer Renderer { get { return renderer; } }
     public ColorEnum ColorType { get { return colorType; } }
     public bool CanMove => canMove;
+    public float Speed => speed;
 
     #endregion
 
@@ -30,13 +31,34 @@ public class FloorBlock : MonoBehaviour
     private void Awake()
     {
         renderer ??= GetComponentInChildren<MeshRenderer>();
-
-        Init();
     }
 
-    private void Init()
+    private void Start()
     {
+        StartListen();
+    }
+
+    private void StartListen()
+    {
+        EventManager.StartListening(EventName.OnMiniGameStart, GameStart);
+        EventManager.StartListening(EventName.OnMiniGameOver, GameOver);
+    }
+    private void StopListen()
+    {
+        EventManager.StopListening(EventName.OnMiniGameStart, GameStart);
+        EventManager.StopListening(EventName.OnMiniGameOver, GameOver);
+    }
+
+
+    private void GameStart()
+    {
+        speed = 10f;
         SetColor(ColorEnum.Yellow);
+        canMove = true;
+    }
+    private void GameOver()
+    {
+        canMove = false;
     }
 
     private void Update()
@@ -72,10 +94,15 @@ public class FloorBlock : MonoBehaviour
     private void SetColor(ColorEnum color)
     {
         colorType = color;
-        renderer.material.color = GetColor.GetColorEnumToColor(colorType);
+        renderer.material.SetColor("_EmissionColor", GetColor.GetColorEnumToColor(color));
     }
 
 
     #endregion
+
+    private void OnDestroy()
+    {
+        StopListen();
+    }
 
 }
