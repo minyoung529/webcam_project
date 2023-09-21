@@ -44,7 +44,6 @@ public class PenguinGenerator : MonoBehaviour
 
     private void OnPenguinInstalled(Penguin penguin)
     {
-        Debug.Log("Spawn After Installed");
         Spawn();
     }
 
