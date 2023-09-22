@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SocialPlatforms.Impl;
 
 public class PenguinGameController : MonoBehaviour
 {
@@ -46,14 +47,8 @@ public class PenguinGameController : MonoBehaviour
         EventManager<Penguin>.StartListening(EventName.OnMiniGameActionFailed, OnGameFailed);
     }
 
-
     private void OnGameFailed(Penguin penguin)
     {
-        if (--hp <= 0)
-        {
-            EventManager.TriggerEvent(EventName.OnMiniGameOver);
-        }
-
         readyInput = true;
     }
 
@@ -89,7 +84,6 @@ public class PenguinGameController : MonoBehaviour
     {
         if (!ReadyInupt) return;
 
-        Debug.Log("Bubble Pop");    
         EventManager<Penguin>.TriggerEvent(EventName.OnMiniGameActionStarted, generator.PrevPenguin);
         ReadyInupt = false;
     }
@@ -100,8 +94,8 @@ public class PenguinGameController : MonoBehaviour
         readyInput = true;
         speed = START_SPEED;
         hp = MAX_HP;
-
         highScore = PlayerPrefs.GetInt("PENGUIN_HIGHSCORE");
+        score = 0;
     }
 
     public void GameOver()

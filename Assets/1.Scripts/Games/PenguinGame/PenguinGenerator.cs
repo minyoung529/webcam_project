@@ -47,6 +47,17 @@ public class PenguinGenerator : MonoBehaviour
         Spawn();
     }
 
+    private void DelayOneFrameSpawn()
+    {
+        StartCoroutine(DelaySpawn());
+    }
+
+    private IEnumerator DelaySpawn()
+    {
+        yield return null;
+        Spawn();
+    }
+
     private void Spawn()
     {
         Penguin penguin = pool.Get();
@@ -62,7 +73,7 @@ public class PenguinGenerator : MonoBehaviour
     private void GameStart()
     {
         prevPenguin = startPenguin;
-        Spawn();
+        DelayOneFrameSpawn();
     }
 
     private void GameStop()

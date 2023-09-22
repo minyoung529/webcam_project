@@ -527,7 +527,9 @@ namespace DlibFaceLandmarkDetectorExample
 
                         float noseDistance = Mathf.Abs((float)(points[3].y - points[1].y));
                         float mouseDistance = Mathf.Abs((float)(points[14].y - points[16].y));
-                        if (mouseDistance > noseDistance / 2.0)
+
+                        Debug.Log(mouseDistance + ", " + noseDistance + "   DIFF : " + (mouseDistance - noseDistance));
+                        if (mouseDistance > noseDistance / 4.0f)
                         {
                             isMouthOpen = true;
                         }
@@ -624,7 +626,9 @@ namespace DlibFaceLandmarkDetectorExample
                         if (_isMouthOpen != isMouthOpen)
                         {
                             if (isMouthOpen)
+                            {
                                 faceController.Event.Trigger((int)FaceEvent.MouthOpen);
+                            }
                             else
                                 faceController.Event.Trigger((int)FaceEvent.MouthClose);
 

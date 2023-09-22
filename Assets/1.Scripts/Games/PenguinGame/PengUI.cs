@@ -23,14 +23,23 @@ public class PengUI : MonoBehaviour
     private void Fail(Penguin penguin)
     {
         if (index < 0 || index >= hearts.Length)
+        {
             return;
+        }
 
         hearts[index++].gameObject.SetActive(false);
+
+        if (index == hearts.Length)
+        {
+            EventManager.TriggerEvent(EventName.OnMiniGameOver);
+        }
     }
 
     private void GameOver()
     {
         gameOverCanvas.gameObject.SetActive(true);
+        gameOverCanvas.transform.localScale = Vector3.one;
+        gameOverCanvas.DOKill();
         gameOverCanvas.DOFade(1f, 1f);
     }
 
@@ -45,6 +54,8 @@ public class PengUI : MonoBehaviour
         {
             heart.gameObject.SetActive(true);
         }
+
+        index = 0;
     }
 
     private void OnDestroy()

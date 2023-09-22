@@ -5,9 +5,15 @@ using UnityEngine;
 
 public class PengViewDown : MonoBehaviour
 {
+    private Vector3 originalPosition;
+
+    [SerializeField]
     private void Awake()
     {
         EventManager<Penguin>.StartListening(EventName.OnMiniGameActionSuccessed, GoDown);
+        EventManager.StartListening(EventName.OnMiniGameStart, ResetPosition);
+
+        originalPosition = transform.position;
     }
 
     private void GoDown(Penguin penguin)
@@ -19,8 +25,14 @@ public class PengViewDown : MonoBehaviour
         });
     }
 
+    private void ResetPosition()
+    {
+        transform.position = originalPosition;
+    }
+
     private void OnDestroy()
     {
         EventManager<Penguin>.StopListening(EventName.OnMiniGameActionSuccessed, GoDown);
+        EventManager.StopListening(EventName.OnMiniGameStart, ResetPosition);
     }
 }
