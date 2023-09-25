@@ -19,6 +19,7 @@ public class TwichChattingManager : MonoBehaviour
     private bool chattingStop = false;
     private void Start()
     {
+        twichUserSO.privewChat.Clear();
         InitUser();
     }
     private IEnumerator CreateChat()
@@ -45,6 +46,7 @@ public class TwichChattingManager : MonoBehaviour
             item.ShowChat(text);
         twichUserSO.AddPriviewChat(item.GetChat());
         RecentChat(item);
+        //print($"Created user! {item.GetChat()}");
     }
     private void RecentChat(TwichChat twichChat)
     {
@@ -52,7 +54,9 @@ public class TwichChattingManager : MonoBehaviour
         scrollbar.value = 0;
         if (recentChat.Count >= 20)
         {
+            //print($"Chat deleted! {recentChat[0].GetChat()}");
             PoolManager.Instance.Push(recentChat[0].gameObject);
+            recentChat.RemoveAt(0);
         }
     }
     private void InitUser()
@@ -66,7 +70,7 @@ public class TwichChattingManager : MonoBehaviour
             userNameRan.Remove(name);
             string engName = userEngNameRan[Random.Range(0, userEngNameRan.Count)];
             userEngNameRan.Remove(engName);
-            UserBadgeType badgeType = (UserBadgeType)Random.Range(0, (int)UserBadgeType.MaxTemp);
+            UserBadgeType badgeType = (UserBadgeType)Random.Range(2, (int)UserBadgeType.MaxTemp);
             UserColor color = (UserColor)Random.Range(0, (int)UserColor.MaxTemp);
             User newUser = new User(name, engName, badgeType, color);
             twichUserSO.users.Add(newUser);
