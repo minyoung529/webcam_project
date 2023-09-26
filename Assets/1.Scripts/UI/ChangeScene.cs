@@ -7,6 +7,10 @@ public enum SceneType
 {
     Dinosaur,
     Penguin,
+    SwitchColor,
+    TeachersBack,
+    ShootingMiniGameTestScene,
+    StartScene,
 
     Count
 }
