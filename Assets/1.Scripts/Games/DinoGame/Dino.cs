@@ -29,6 +29,11 @@ public class Dino : MonoBehaviour
         if (faceController)
         {
             faceController.Event.StartListening((int)FaceEvent.MouthOpen, Jump);
+
+            faceController.Event.StartListening((int)FaceEvent.LeftEyeClose, Sliding);
+            faceController.Event.StartListening((int)FaceEvent.RightEyeClose, Sliding);
+            faceController.Event.StartListening((int)FaceEvent.LeftEyeOpen, SlidingEnd);
+            faceController.Event.StartListening((int)FaceEvent.RightEyeOpen, SlidingEnd);
         }
 
         EventManager.StartListening(EventName.OnMiniGameStart, OnGameRestart);
@@ -120,6 +125,11 @@ public class Dino : MonoBehaviour
         if (faceController)
         {
             faceController.Event.StopListening((int)FaceEvent.MouthOpen, Jump);
+
+            faceController.Event.StartListening((int)FaceEvent.LeftEyeClose, Sliding);
+            faceController.Event.StartListening((int)FaceEvent.RightEyeClose, Sliding);
+            faceController.Event.StartListening((int)FaceEvent.LeftEyeOpen, SlidingEnd);
+            faceController.Event.StartListening((int)FaceEvent.RightEyeOpen, SlidingEnd);
         }
 
         EventManager.StopListening(EventName.OnMiniGameStart, OnGameRestart);

@@ -6,6 +6,7 @@ using UnityEngine.SceneManagement;
 public enum SceneType
 {
     Dinosaur,
+    Penguin,
 
     Count
 }

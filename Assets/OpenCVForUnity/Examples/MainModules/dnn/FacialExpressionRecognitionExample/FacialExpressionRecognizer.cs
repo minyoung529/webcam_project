@@ -225,7 +225,7 @@ namespace OpenCVForUnityExample.DnnModel
         {
             if (results.Count == 0)
             {
-                Debug.Log("No face");
+                //Debug.Log("No face");
                 return "No Face";
             }
 
