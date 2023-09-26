@@ -1778,6 +1778,10 @@ namespace OpenCVForUnity.Calib3dModule
             if (distCoeffs != null) distCoeffs.ThrowIfDisposed();
             if (rvec != null) rvec.ThrowIfDisposed();
             if (tvec != null) tvec.ThrowIfDisposed();
+            if (objectPoints == null) return false;
+            if (imagePoints == null) return false;
+            if (distCoeffs == null) return false;
+
             Mat objectPoints_mat = objectPoints;
             Mat imagePoints_mat = imagePoints;
             Mat distCoeffs_mat = distCoeffs;
