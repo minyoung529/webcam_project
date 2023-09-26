@@ -1778,13 +1778,14 @@ namespace OpenCVForUnity.Calib3dModule
             if (distCoeffs != null) distCoeffs.ThrowIfDisposed();
             if (rvec != null) rvec.ThrowIfDisposed();
             if (tvec != null) tvec.ThrowIfDisposed();
-            if (objectPoints == null) return false;
-            if (imagePoints == null) return false;
-            if (distCoeffs == null) return false;
 
             Mat objectPoints_mat = objectPoints;
             Mat imagePoints_mat = imagePoints;
             Mat distCoeffs_mat = distCoeffs;
+
+            if (objectPoints_mat == null) return false;
+            if (imagePoints_mat == null) return false;
+            if (distCoeffs_mat == null) return false;
             return calib3d_Calib3d_solvePnP_10(objectPoints_mat.nativeObj, imagePoints_mat.nativeObj, cameraMatrix.nativeObj, distCoeffs_mat.nativeObj, rvec.nativeObj, tvec.nativeObj, useExtrinsicGuess, flags);
 
 

@@ -12,13 +12,17 @@ public class SwitchColor : MonoBehaviour
     private Rigidbody rigid = null;
     private FaceController faceController;
 
-    private ColorEnum colorType = ColorEnum.Red;
+    private ColorEnum colorType = ColorEnum.Yellow;
     public ColorEnum ColorType { get { return colorType; } }
 
     private bool leftMove = false;
     private bool rightMove = false;
 
     private bool gameOver = false;
+
+    [SerializeField]
+    private SwitchColorUI ui;
+
     private void Start()
     {
         faceController = FindObjectOfType<FaceController>();
@@ -120,16 +124,14 @@ public class SwitchColor : MonoBehaviour
     {
         colorType = nextColor;
         renderer.material.color = GetColor.GetColorEnumToColor(colorType);
+
+        int nextIdx = ((int)nextColor + 1) % (int)ColorEnum.Count;
+        ui.UpdateNextColor(GetColor.GetColorEnumToColor((ColorEnum)nextIdx));
     }
 
     private void SetNextColor()
     {
-        int index = (int)colorType + 1;
-        if (index >= (int)ColorEnum.Count)
-        {
-            index = (int)ColorEnum.None + 1;
-        }
-
+        int index = ((int)colorType + 1) % (int)ColorEnum.Count;
         SetColor((ColorEnum)index);
     }
     #endregion
@@ -173,7 +175,7 @@ public class SwitchColor : MonoBehaviour
     private void OnCollisionEnter(Collision collision)
     {
         FloorBlock floor = collision.collider?.GetComponent<FloorBlock>();
-       if(floor !=null)  TriggerPlayer(floor);
+        if (floor != null) TriggerPlayer(floor);
     }
 
     #endregion
@@ -185,7 +187,7 @@ public class SwitchColor : MonoBehaviour
         EventManager.StartListening(EventName.OnMiniGameStart, GameStart);
         EventManager.StartListening(EventName.OnMiniGameOver, GameOver);
     }
-    
+
 
     private void StopListening()
     {

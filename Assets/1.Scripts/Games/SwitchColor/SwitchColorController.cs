@@ -16,6 +16,7 @@ public class SwitchColorController : MonoBehaviour
     SwitchColorUI ui;
     SwitchColorUI UI => ui;
 
+
     private void Awake()
     {
         ui = GetComponent<SwitchColorUI>();

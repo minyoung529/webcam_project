@@ -220,6 +220,8 @@ namespace CVVTuber
                 {
                     rvec = new Mat(3, 1, CvType.CV_64FC1);
                     tvec = new Mat(3, 1, CvType.CV_64FC1);
+
+                    if((objectPoints != null) && (imagePoints!=null) && (camMatrix != null) && (distCoeffs != null))
                     Calib3d.solvePnP(objectPoints, imagePoints, camMatrix, distCoeffs, rvec, tvec);
                 }
 
@@ -237,11 +239,13 @@ namespace CVVTuber
 
                 if (double.IsNaN(tvec_z) || isNotInViewport)
                 { // if tvec is wrong data, do not use extrinsic guesses. (the estimated object is not in the camera field of view)
-                    Calib3d.solvePnP(objectPoints, imagePoints, camMatrix, distCoeffs, rvec, tvec);
+                    if ((objectPoints != null) && (imagePoints != null) && (camMatrix != null) && (distCoeffs != null))
+                        Calib3d.solvePnP(objectPoints, imagePoints, camMatrix, distCoeffs, rvec, tvec);
                 }
                 else
                 {
-                    Calib3d.solvePnP(objectPoints, imagePoints, camMatrix, distCoeffs, rvec, tvec, true, Calib3d.SOLVEPNP_ITERATIVE);
+                    if ((objectPoints != null) && (imagePoints != null) && (camMatrix != null) && (distCoeffs != null))
+                        Calib3d.solvePnP(objectPoints, imagePoints, camMatrix, distCoeffs, rvec, tvec, true, Calib3d.SOLVEPNP_ITERATIVE);
                 }
 
                 //Debug.Log (tvec.dump () + " " + isNotInViewport);
