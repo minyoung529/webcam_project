@@ -17,6 +17,7 @@ public class TeachersBackTeacher : MonoBehaviour
     private Vector3 warningScale= new Vector3(1f, 1f, 1f);
     private Animator anim;
 
+    private bool gameOver = false;
     private void Awake()
     {
         anim = GetComponent<Animator>();
@@ -26,6 +27,7 @@ public class TeachersBackTeacher : MonoBehaviour
 
     private void GameStart()
     {
+        gameOver = false;
         EventManager<TeachersBackPlayer>.StartListening(EventName.OnMiniGameActionFailed, Scold);
         
         StopAllCoroutines();
@@ -54,6 +56,8 @@ public class TeachersBackTeacher : MonoBehaviour
     }
     private IEnumerator GameOverDelay()
     {
+        if (gameOver) yield return null;
+        gameOver = true;
         yield return new WaitForSeconds(2f);
         EventManager.TriggerEvent(EventName.OnMiniGameOver);
     }

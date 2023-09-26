@@ -18,6 +18,7 @@ public class SwitchColor : MonoBehaviour
     private bool leftMove = false;
     private bool rightMove = false;
 
+    private bool gameOver = false;
     private void Start()
     {
         faceController = FindObjectOfType<FaceController>();
@@ -49,6 +50,7 @@ public class SwitchColor : MonoBehaviour
     #region GameFlow
     public void GameStart()
     {
+        gameOver = false;
         if (faceController)
         {
             faceController.Event.StartListening((int)FaceEvent.MouthOpen, SetNextColor);
@@ -60,9 +62,11 @@ public class SwitchColor : MonoBehaviour
         }
 
         ResetPlayer();
+        rigid.useGravity = true;
     }
     public void GameOver()
     {
+        gameOver = true;
         if (faceController)
         {
             faceController.Event.StopListening((int)FaceEvent.MouthOpen, SetNextColor);
@@ -73,6 +77,7 @@ public class SwitchColor : MonoBehaviour
             faceController.Event.StopListening((int)FaceEvent.RightEyeOpen, StopRightMove);
         }
         ResetPlayer();
+        rigid.useGravity = false;
     }
     #endregion
 
@@ -137,6 +142,7 @@ public class SwitchColor : MonoBehaviour
     /// <param name="player"></param>
     private void Different(FloorBlock floor)
     {
+        if (gameOver) return;
         EventManager.TriggerEvent(EventName.OnMiniGameOver);
     }
 

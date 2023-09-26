@@ -11,6 +11,8 @@ public class DonationManager : MonoSingleton<DonationManager>
     [SerializeField]
     private DonationPanel donationPanel;
     private AudioSource audioSource;
+
+    private bool donationing = false;
     private void Start()
     {
         audioSource = GetComponent<AudioSource>();
@@ -41,11 +43,19 @@ public class DonationManager : MonoSingleton<DonationManager>
     /// </summary>
     public void Donation(string user, int cost, string contentName)
     {
+        donationing = true;
         DonationClip donation = donationAudio.FindDonationClip(GetDonationAmount(cost));
         ContentClip content = donationAudio.FindContentClip(contentName);
         AudioClip donationClip = donation.clip[Random.Range(0, donation.clip.Count)];
         StartCoroutine(PlaySound(donationClip, content));
         StartCoroutine(donationPanel.Donation(user, cost.ToString(), content.content, donationClip.length));
+    }
+    
+    public void OffDonation()
+    {
+        donationing = false;
+        donationPanel.OffDonation();
+        audioSource.Stop();
     }
 }
 [CustomEditor(typeof(DonationManager))]
@@ -59,6 +69,7 @@ public class DonationEditor : Editor
     {
         donationManager = target as DonationManager;
     }
+
     public override void OnInspectorGUI()
     {
         base.OnInspectorGUI();

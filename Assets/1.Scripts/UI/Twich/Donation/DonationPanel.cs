@@ -39,4 +39,16 @@ public class DonationPanel : MonoBehaviour
         contentText.DOFade(0, 0.2f);
         image.DOFade(0, 0.3f);
     }
+    
+    
+    public void OffDonation()
+    {
+        image.DOFade(0, 0.05f);
+        userText.DOFade(0, 0.05f);
+        contentText.DOFade(0, 0.05f);
+        userText.DOFade(0, 0.05f);
+        contentText.DOFade(0, 0.05f);
+        image.DOFade(0, 0.05f);
+    }
+
 }

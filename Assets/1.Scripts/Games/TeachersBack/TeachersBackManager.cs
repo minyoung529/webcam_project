@@ -20,9 +20,9 @@ public class TeachersBackManager : MonoBehaviour
     private float speed = 2f;
     private float minusSpeed = 0.1f;
 
-
     public void OnGameStart()
     {
+
         EventManager.TriggerEvent(EventName.OnMiniGameStart);
     }
 
