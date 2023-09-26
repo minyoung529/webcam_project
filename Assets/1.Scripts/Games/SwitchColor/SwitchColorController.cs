@@ -26,10 +26,6 @@ public class SwitchColorController : MonoBehaviour
         StartListening();
     }
 
-    public void OnGameStart()
-    {
-        EventManager.TriggerEvent(EventName.OnMiniGameStart);
-    }
 
     private void GameStart()
     {
@@ -54,7 +50,7 @@ public class SwitchColorController : MonoBehaviour
         isGame = false;
         StopCoroutine(ScoreUP());
 
-        UI.GameOverUI(score);
+        UI.GameOverUI();
     }
 
     private void LevelUP()

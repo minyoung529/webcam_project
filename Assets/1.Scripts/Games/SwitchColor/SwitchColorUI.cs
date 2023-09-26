@@ -9,22 +9,20 @@ public class SwitchColorUI : MonoBehaviour
     [Header("In Game")]
     [SerializeField] TextMeshProUGUI scoreText;
     [Header("Game Over")]
-    [SerializeField] GameObject gameOverPanel;
-    [SerializeField] TextMeshProUGUI gameOverScoreText;
+    [SerializeField] CanvasGroup gameOverPanel;
 
     public void UpdateScoreUI(int score)
     {
         scoreText.SetText(score.ToString());
     }
 
-    public void GameOverUI(int score)
+    public void GameOverUI()
     {
-        gameOverScoreText.SetText(score.ToString());
-        gameOverPanel.SetActive(true);
+        gameOverPanel.alpha = 1f;
     }
 
     public void OffGameOverUI()
     {
-        gameOverPanel.SetActive(false);
+        gameOverPanel.alpha = 0f;
     }
 }

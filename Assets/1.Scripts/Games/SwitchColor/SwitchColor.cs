@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Experimental.GlobalIllumination;
 
 public class SwitchColor : MonoBehaviour
 {
@@ -10,6 +9,7 @@ public class SwitchColor : MonoBehaviour
     private Vector3 playerStartPos;
 
     private MeshRenderer renderer = null;
+    private Rigidbody rigid = null;
     private FaceController faceController;
 
     private ColorEnum colorType = ColorEnum.Red;
@@ -22,9 +22,11 @@ public class SwitchColor : MonoBehaviour
     {
         faceController = FindObjectOfType<FaceController>();
         renderer = GetComponentInChildren<MeshRenderer>();
+        rigid = GetComponent<Rigidbody>();
         playerStartPos = transform.position;
 
         StartListening();
+        EventManager.TriggerEvent(EventName.OnMiniGameStart);
     }
 
     private void Update()
@@ -39,6 +41,7 @@ public class SwitchColor : MonoBehaviour
 
     private void ResetPlayer()
     {
+        rigid.velocity = Vector3.zero;
         transform.position = playerStartPos;
         SetColor(ColorEnum.Yellow);
     }
