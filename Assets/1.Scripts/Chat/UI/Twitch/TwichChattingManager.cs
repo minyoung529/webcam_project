@@ -36,7 +36,7 @@ public class TwichChattingManager : MonoBehaviour
     }
     public void CreateUser(string text = "")
     {
-        TwichChat item = PoolManager.Instance.GetPoolObject("TwichBubble").GetComponent<TwichChat>();
+        TwichChat item = PoolManager.Instance.GetPoolObject("TwitchBubble").GetComponent<TwichChat>();
         item.transform.SetParent(content);
         item.User = twichUserSO.users[Random.Range(0, twichUserSO.users.Count)];
         item.InitChat(twichUserSO.icons[(int)item.User.badge], twichUserSO.colors[(int)item.User.color]);
