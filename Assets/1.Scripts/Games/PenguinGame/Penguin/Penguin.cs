@@ -162,8 +162,10 @@ public class Penguin : MonoBehaviour
 
     public void OnRelease()
     {
+        if (this == null) return;
         isRelease = true;
         EventManager<Penguin>.StopListening(EventName.OnMiniGameActionStarted, OnBubblePop);
+
         gameObject.SetActive(false);
     }
 
